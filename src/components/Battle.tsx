@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../GameContext';
 import { Monster, Rank } from '../types';
 import { generateMonster, getNextRank } from '../lib/gameData';
+import { Sword, Zap } from 'lucide-react';
 
 interface BattleProps {
     enemy: Monster;
@@ -9,14 +10,13 @@ interface BattleProps {
     onLeave: () => void;
 }
 
-const MonsterCanvas = ({ isSecret, isBoss, state }: { isSecret: boolean, isBoss: boolean, state: 'idle' | 'hurt' | 'attack' }) => {
+const MonsterCanvas = ({ isSecret, isBoss, state, portalIsRed }: { isSecret: boolean, isBoss: boolean, state: 'idle' | 'hurt' | 'attack', portalIsRed: boolean }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const spriteRef = useRef<HTMLImageElement | null>(null);
 
     useEffect(() => {
         const image = new Image();
-        // Fallback placeholder with generic 160x160 frames. Provide the URL path from your assets if available.
-        image.src = `https://raw.githubusercontent.com/kayk0kayo/Solo-mobile/main/monster_placeholder.png`; // Fallback image or a generic pixel square for now if URL fails
+        image.src = `https://raw.githubusercontent.com/kayk0kayo/Solo-mobile/main/monster_placeholder.png`; 
         
         image.onload = () => {
             spriteRef.current = image;
@@ -40,19 +40,17 @@ const MonsterCanvas = ({ isSecret, isBoss, state }: { isSecret: boolean, isBoss:
         let timer = 0;
         const frameInterval = 1000 / 12; // 12 FPS
 
-        // Using user requested 160x160 size
         const spriteWidth = 160;
         const spriteHeight = 160;
         
         let frameX = 0;
-        let frameY = 0; // Row 0: Idle, Row 1: Attack, Row 2: Hurt
+        let frameY = 0; 
 
-        // State machine frame rows
         if (state === 'idle') frameY = 0;
         else if (state === 'attack') frameY = 1;
         else if (state === 'hurt') frameY = 2;
 
-        const maxFrames = 4; // Assume 4 frames per animation
+        const maxFrames = 4; 
 
         const animate = (timestamp: number) => {
             const deltaTime = timestamp - lastTime;
@@ -66,10 +64,6 @@ const MonsterCanvas = ({ isSecret, isBoss, state }: { isSecret: boolean, isBoss:
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Optional glow effect based on type
-            ctx.shadowColor = isSecret ? '#a855f7' : isBoss ? '#f97316' : '#ef4444';
-            ctx.shadowBlur = 15;
 
             if (spriteRef.current) {
                 // 3. SECURE CLIPPING AND RENDERING
@@ -85,13 +79,19 @@ const MonsterCanvas = ({ isSecret, isBoss, state }: { isSecret: boolean, isBoss:
                     canvas.height
                 );
             } else {
-                // Placeholder rectangle if image fails to load
-                ctx.fillStyle = isSecret ? '#a855f7' : isBoss ? '#f97316' : '#ef4444';
-                ctx.globalAlpha = 0.8;
-                // Just draw a rectangle changing height slightly to 'animate'
+                ctx.fillStyle = isSecret ? '#7e22ce' : isBoss ? '#c2410c' : portalIsRed ? '#991b1b' : '#1e3a8a';
+                ctx.globalAlpha = 0.6;
+                ctx.beginPath();
                 const bob = state === 'attack' ? -10 : state === 'hurt' ? 10 : Math.sin(timestamp/200) * 5;
-                ctx.fillRect(20, 20 + bob, canvas.width - 40, canvas.height - 40);
+                ctx.arc(canvas.width/2, canvas.height/2 + bob, canvas.width/3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = state === 'hurt' ? '#000' : portalIsRed ? '#ff0000' : '#fff';
                 ctx.globalAlpha = 1.0;
+                ctx.beginPath();
+                ctx.arc(canvas.width/2 - 15, canvas.height/2 + bob - 10, 5, 0, Math.PI * 2);
+                ctx.arc(canvas.width/2 + 15, canvas.height/2 + bob - 10, 5, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             animationFrameId = requestAnimationFrame(animate);
@@ -102,14 +102,14 @@ const MonsterCanvas = ({ isSecret, isBoss, state }: { isSecret: boolean, isBoss:
         return () => {
             cancelAnimationFrame(animationFrameId);
         };
-    }, [state, isSecret, isBoss]);
+    }, [state, isSecret, isBoss, portalIsRed]);
 
     return (
         <canvas 
             ref={canvasRef} 
             width={160} 
             height={160} 
-            className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(255,0,0,0.5)]"
+            className={`w-full h-full object-contain filter ${portalIsRed ? 'drop-shadow-[0_0_15px_rgba(220,38,38,0.6)]' : 'drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]'}`}
         />
     );
 };
@@ -279,103 +279,172 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
     const hpPercent = Math.max(0, (gameState.currentHp / combatStats.maxHp) * 100);
     const enemyHpPercent = Math.max(0, (enemyHp / enemy.maxHp) * 100);
 
+    const systemWinClass = portalIsRed 
+        ? "bg-[#0a0000]/80 backdrop-blur-md border border-red-900 shadow-[0_0_15px_rgba(153,27,27,0.3)]"
+        : "bg-[#050b14]/80 backdrop-blur-md border border-[#1e3a8a] shadow-[0_0_15px_rgba(30,58,138,0.3)]";
+
+    const systemTitleClass = portalIsRed
+        ? "text-red-500 font-bold uppercase tracking-widest drop-shadow-[0_0_5px_rgba(239,68,68,0.8)] border-b border-red-900/50 pb-2 mb-2"
+        : "text-blue-300 font-bold uppercase tracking-widest drop-shadow-[0_0_5px_rgba(147,197,253,0.8)] border-b border-blue-900/50 pb-2 mb-2";
+
+    const systemBarBgClass = portalIsRed ? "bg-black border border-red-900/50" : "bg-[#010205] border border-blue-900/50";
+
     return (
-        <div className={`h-[100dvh] w-full flex flex-col font-sans text-white transition-colors duration-1000 items-center justify-between p-4 relative z-0
-            ${portalIsRed ? 'bg-[#1a0505]' : 'bg-[#010915]'}`}>
+        <div className={`h-[100dvh] w-full flex flex-col font-sans transition-colors duration-1000 items-center justify-between p-2 sm:p-4 md:px-8 relative z-0 overflow-hidden
+            ${portalIsRed ? 'text-red-50' : 'text-slate-50'}`}>
              
-             {/* Background Effects */}
-             <div className={`absolute inset-0 z-[-1] pointer-events-none opacity-40`} style={{backgroundImage: "url('data:image/svg+xml,%3Csvg width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 40 40\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cg fill=\\'%23133667\\' fill-opacity=\\'0.4\\' fill-rule=\\'evenodd\\'%3E%3Cpath d=\\'M0 40L40 0H20L0 20M40 40V20L20 40\\'/%3E%3C/g%3E%3C/svg%3E')"}}></div>
-             <div className={`absolute inset-0 z-[-1] pointer-events-none bg-gradient-to-b from-transparent ${portalIsRed ? 'to-[#ef4444]/20' : 'to-[#03dbfc]/20'} opacity-50`}></div>
+             {/* Dungeon Atmosphere Layers */}
+             <div className="absolute inset-0 z-[-3] bg-black"></div>
+             {portalIsRed ? (
+                 <>
+                    {/* Deep red cavern vibe */}
+                    <div className="absolute inset-0 z-[-2] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-950 via-[#1a0505] to-[#050000] opacity-90"></div>
+                    {/* Pulsing anomaly effect */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-red-600/10 blur-[150px] animate-pulse pointer-events-none z-[-1]"></div>
+                 </>
+             ) : (
+                 <>
+                    {/* Normal cavern vibe */}
+                    <div className="absolute inset-0 z-[-2] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#0f172a] via-[#020617] to-black opacity-90"></div>
+                    {/* Mana crystals glow */}
+                    <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] bg-cyan-800/10 rounded-full blur-[120px] pointer-events-none z-[-1]"></div>
+                    <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-blue-800/10 rounded-full blur-[120px] pointer-events-none z-[-1]"></div>
+                 </>
+             )}
+             
+             {/* Stone/Grunge Texture overlay using CSS pattern */}
+             <div className="absolute inset-0 z-[-1] opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 2px, transparent 2px)', backgroundSize: '64px 64px' }}></div>
 
-             {/* Header */}
-             <div className="w-full max-w-5xl z-10 flex justify-between items-center shrink-0 border-b border-[#004080] pb-2">
-                  <div className={`text-2xl font-black uppercase tracking-widest ${portalIsRed ? 'text-[#ef4444] drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 'text-[#03dbfc] drop-shadow-[0_0_10px_rgba(3,219,252,0.8)]'}`}>
-                      {portalIsRed ? 'PORTAL VERMELHO' : 'MASMORRA'}
-                  </div>
-                  <button onClick={onLeave} className="px-6 py-2 border border-[#03dbfc]/50 bg-[#001732]/80 text-[#03dbfc] text-xs uppercase font-bold active:scale-95 skew-x-[-12deg] group">
-                      <span className="block skew-x-[12deg] group-hover:text-white transition-colors">Extracação Forçada</span>
-                  </button>
+             {/* Header System Notification */}
+             <div className="w-full max-w-5xl z-10 flex justify-between items-start shrink-0 mt-2">
+                 <div className={`inline-block px-6 py-2 border-y border-r rounded-r-sm backdrop-blur-md shadow-lg
+                     ${portalIsRed ? 'border-red-600 bg-red-950/60 shadow-red-900/40' : 'border-[#1e3a8a] bg-[#050b14]/60 shadow-[0_0_15px_rgba(30,58,138,0.4)]'}`}>
+                     <h1 className={`text-lg sm:text-xl font-bold tracking-[0.2em] uppercase ${portalIsRed ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'text-blue-300 drop-shadow-[0_0_8px_rgba(147,197,253,0.8)]'}`}>
+                         {portalIsRed ? 'ZONA DE RISCO: PORTAL VERMELHO' : 'MASMORRA INSTANCIADA'}
+                     </h1>
+                     <div className={`text-[9px] tracking-widest uppercase mt-0.5 ${portalIsRed ? 'text-red-400' : 'text-cyan-400'}`}>
+                         Sistema de Sobrevivência Ativo
+                     </div>
+                 </div>
+                 
+                 <button onClick={onLeave} className={`px-5 py-2 border rounded-sm font-bold uppercase text-xs tracking-widest transition-all active:scale-95 backdrop-blur-md shadow-lg
+                     ${portalIsRed 
+                         ? 'border-red-800 bg-red-950/50 text-red-300 hover:bg-red-900 hover:text-white hover:shadow-[0_0_10px_rgba(220,38,38,0.5)]' 
+                         : 'border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white hover:shadow-[0_0_10px_rgba(100,116,139,0.5)]'}`}>
+                     Fugir
+                 </button>
              </div>
              
-             {/* Battle Arena */}
-             <div className="flex-grow w-full max-w-5xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-16 z-10 shrink-0">
+             {/* Enemy Presentation Hologram */}
+             <div className={`w-full max-w-sm sm:max-w-md flex flex-col items-center p-6 rounded-sm mt-auto mb-auto ${systemWinClass}`}>
+                 {/* Hologram Corners */}
+                 <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-inherit"></div>
+                 <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-inherit"></div>
+                 <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-inherit"></div>
+                 <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-inherit"></div>
+
+                 <div className={`text-center font-bold text-xl uppercase tracking-widest ${portalIsRed ? 'text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.5)]' : 'text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'}`}>
+                     {enemy.name}
+                 </div>
+                 <div className={`text-[10px] uppercase tracking-widest mt-1 mb-4 ${portalIsRed ? 'text-red-500/70' : 'text-blue-300/70'}`}>
+                     Level {effectiveRank} {enemy.isBoss ? '[BOSS]' : ''} {enemy.isSecret ? '[ANOMALIA]' : ''}
+                 </div>
+                 
+                 <div className={`w-40 h-40 sm:w-56 sm:h-56 relative transition-all duration-300 my-2
+                     ${enemyAnimState === 'attack' ? 'scale-110 mb-4' : enemyAnimState === 'hurt' ? 'scale-95 brightness-200' : 'scale-100'}
+                 `}>
+                     <MonsterCanvas isSecret={enemy.isSecret || false} isBoss={enemy.isBoss || false} state={enemyAnimState} portalIsRed={portalIsRed} />
+                 </div>
+
+                 {/* Enemy Boss/Normal HP Bar */}
+                 <div className="w-full mt-4">
+                     <div className={`w-full h-2 relative rounded-sm overflow-hidden ${systemBarBgClass}`}>
+                         <div className={`h-full transition-all duration-300 ${portalIsRed ? 'bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.8)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'}`} style={{ width: `${enemyHpPercent}%` }}></div>
+                     </div>
+                     <div className={`text-center text-[10px] uppercase tracking-widest mt-1.5 font-bold ${portalIsRed ? 'text-red-400' : 'text-slate-400'}`}>
+                         HP {Math.floor(enemyHp)} / {enemy.maxHp}
+                     </div>
+                 </div>
+             </div>
+
+             {/* Bottom UI Console */}
+             <div className="w-full max-w-5xl z-10 flex flex-col sm:flex-row gap-4 h-auto sm:h-[180px] shrink-0 mt-4">
                   
-                  {/* Player Status */}
-                  <div className="w-full sm:w-[40%] order-3 sm:order-1 flex flex-col justify-end h-full">
-                       <div className="text-xs text-[#03dbfc]/70 font-bold mb-1 uppercase hidden sm:block text-left tracking-widest">Caçador [Rank {gameState.rank}]</div>
-                       
-                       <div className="w-full h-5 sm:h-6 bg-[#001c3d] border border-[#004080] relative mb-2 overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)]">
-                            <div className="h-full bg-gradient-to-r from-green-700 to-green-500 transition-all duration-300 relative" style={{ width: `${hpPercent}%` }}>
-                                 <div className="absolute top-0 right-0 w-2 h-full bg-white/50 blur-[2px]"></div>
-                            </div>
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,1)] tracking-widest">HP {Math.floor(gameState.currentHp)}/{combatStats.maxHp}</span>
-                       </div>
-                       
-                       <div className="flex gap-2 w-full">
-                           <div className="flex-1 h-3 sm:h-4 bg-[#001c3d] border border-[#004080] relative overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-blue-700 to-blue-400 transition-all duration-300" style={{ width: `${(gameState.currentMana / combatStats.maxMana) * 100}%` }}></div>
-                           </div>
-                           <div className="flex-1 h-3 sm:h-4 bg-[#001c3d] border border-[#004080] relative overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-yellow-700 to-yellow-400 transition-all duration-300" style={{ width: `${(gameState.currentEnergy / combatStats.maxEnergy) * 100}%` }}></div>
-                           </div>
-                       </div>
-                  </div>
-
-                  <div className={`text-4xl sm:text-5xl font-black italic order-2 hidden sm:block ${portalIsRed ? 'text-red-500/50' : 'text-[#03dbfc]/30'}`}>VS</div>
-
-                  {/* Enemy Area */}
-                  <div className="w-full sm:w-[40%] order-1 sm:order-3 flex flex-col items-center sm:items-center relative">
-                       <div className="text-center sm:text-center w-full absolute -top-12">
-                           <div className={`text-xl sm:text-2xl font-black uppercase tracking-wider truncate drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] 
-                               ${enemy.isSecret ? 'text-purple-400' : enemy.isBoss ? 'text-orange-400' : 'text-red-500'}`}>
-                               {enemy.name}
-                           </div>
-                           <div className="text-[10px] text-white/50 uppercase tracking-widest font-bold">LV. {effectiveRank} {enemy.isBoss ? '| CHEFE' : ''} {enemy.isSecret ? '| ANOMALIA' : ''}</div>
-                       </div>
-                       
-                       <div className={`w-32 h-32 sm:w-48 sm:h-48 relative transition-all duration-300
-                           ${enemyAnimState === 'attack' ? 'scale-110 mb-4' : enemyAnimState === 'hurt' ? 'scale-95 brightness-200' : 'scale-100'}
-                       `}>
-                           <MonsterCanvas isSecret={enemy.isSecret || false} isBoss={enemy.isBoss || false} state={enemyAnimState} />
-                       </div>
-                       
-                       <div className="w-full max-w-[200px] h-3 sm:h-4 bg-[#001c3d] border border-[#004080] relative mt-6 overflow-hidden">
-                            <div className={`h-full transition-all duration-300 bg-gradient-to-r
-                                ${enemy.isSecret ? 'from-purple-800 to-purple-500' : enemy.isBoss ? 'from-orange-700 to-orange-400' : 'from-red-800 to-red-500'}`} 
-                                style={{ width: `${enemyHpPercent}%` }}>
-                                <div className="absolute top-0 right-0 w-2 h-full bg-white/50 blur-[2px]"></div>
-                            </div>
-                       </div>
-                  </div>
-             </div>
-
-             {/* Action UI */}
-             <div className="w-full max-w-5xl flex gap-4 mt-2 h-[120px] shrink-0 mb-4">
-                  <div className="flex-1 bg-[#001732]/80 backdrop-blur-md border border-[#004080] p-3 overflow-y-auto custom-scrollbar flex flex-col-reverse justify-start text-[10px] sm:text-xs shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] font-mono">
+                  {/* Logs Panel */}
+                  <div className={`flex-1 p-3 rounded-sm flex flex-col-reverse justify-start overflow-y-auto custom-scrollbar font-sans text-[10px] sm:text-xs leading-relaxed ${systemWinClass}`}>
+                      <h3 className={`${systemTitleClass} sticky top-0 bg-transparent z-10 font-mono`}>Registro do Sistema</h3>
                       {[...logs].reverse().map(l => (
-                          <div key={l.id} className={`leading-relaxed tracking-wide
-                              ${l.type === 'reward' ? 'text-yellow-400 drop-shadow-[0_0_2px_rgba(250,204,21,0.5)] font-bold' 
-                              : l.type === 'dmg' ? 'text-red-400 font-bold' 
-                              : 'text-[#03dbfc]/80'}`}>
+                          <div key={l.id} className={`mb-1 tracking-wide font-medium
+                              ${l.type === 'reward' ? 'text-yellow-400 font-bold drop-shadow-[0_0_2px_rgba(250,204,21,0.5)]' 
+                              : l.type === 'dmg' ? (portalIsRed ? 'text-red-300 font-bold' : 'text-red-400 font-bold') 
+                              : (portalIsRed ? 'text-red-100/70' : 'text-blue-100/80')}`}>
                               {l.text}
                           </div>
                       ))}
                   </div>
 
-                  <div className="w-[120px] sm:w-[250px] grid grid-rows-2 gap-2 shrink-0">
-                      <button 
-                        onClick={handleAttack}
-                        className="bg-[#001c3d] border border-[#03dbfc]/50 font-black uppercase text-[#03dbfc] tracking-widest active:scale-95 hover:bg-[#03dbfc] hover:text-[#010915] text-[10px] sm:text-sm skew-x-[-8deg] relative overflow-hidden group">
-                        <span className="block transform skew-x-[8deg] transition-all group-hover:scale-110">ATACAR</span>
-                      </button>
-                      <button 
-                        onClick={handleSkill}
-                        className={`border font-black uppercase active:scale-95 text-[10px] sm:text-xs overflow-hidden text-ellipsis px-1 skew-x-[-8deg] relative group transition-all
-                        ${gameState.playerClass ? 'bg-[#2a0b4d] border-purple-500 text-purple-300 hover:bg-purple-600 hover:text-white hover:shadow-[0_0_15px_rgba(168,85,247,0.8)]' : 'bg-[#010915] border-gray-700/50 text-gray-700'}`}>
-                        <span className="block transform skew-x-[8deg] whitespace-nowrap px-2">
-                             {gameState.playerClass ? gameState.playerClass.baseSkill.name : 'SEM CLASSE'}
-                        </span>
-                      </button>
+                  {/* State & Actions Container */}
+                  <div className="w-full sm:w-[350px] flex flex-col gap-3 shrink-0">
+                      
+                      {/* Player Status Panel */}
+                      <div className={`p-3 rounded-sm ${systemWinClass}`}>
+                          <h3 className={`${systemTitleClass} font-mono`}>Status do Caçador</h3>
+                          <div className="space-y-3 mt-2">
+                              <div>
+                                  <div className="flex justify-between text-[10px] font-bold uppercase mb-1 tracking-widest">
+                                      <span className={portalIsRed ? 'text-red-300' : 'text-green-400'}>HP</span>
+                                      <span className="text-white">{Math.floor(gameState.currentHp)} / {combatStats.maxHp}</span>
+                                  </div>
+                                  <div className={`w-full h-2 rounded-sm overflow-hidden ${systemBarBgClass}`}>
+                                      <div className={`h-full transition-all duration-300 ${portalIsRed ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]'}`} style={{ width: `${hpPercent}%` }}></div>
+                                  </div>
+                              </div>
+                              <div className="flex gap-4">
+                                  <div className="flex-1">
+                                      <div className={`text-[9px] font-bold uppercase mb-1 tracking-widest ${portalIsRed ? 'text-red-300/70' : 'text-blue-400'}`}>Mana</div>
+                                      <div className={`w-full h-1.5 rounded-sm overflow-hidden ${systemBarBgClass}`}>
+                                          <div className="h-full transition-all duration-300 bg-blue-500" style={{ width: `${(gameState.currentMana / combatStats.maxMana) * 100}%` }}></div>
+                                      </div>
+                                  </div>
+                                  <div className="flex-1">
+                                      <div className={`text-[9px] font-bold uppercase mb-1 tracking-widest ${portalIsRed ? 'text-red-300/70' : 'text-yellow-500'}`}>Vigor</div>
+                                      <div className={`w-full h-1.5 rounded-sm overflow-hidden ${systemBarBgClass}`}>
+                                          <div className="h-full transition-all duration-300 bg-yellow-500" style={{ width: `${(gameState.currentEnergy / combatStats.maxEnergy) * 100}%` }}></div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      {/* Action Buttons Panel */}
+                      <div className="flex gap-2 h-full min-h-[50px]">
+                          <button 
+                              onClick={handleAttack}
+                              className={`flex-1 flex items-center justify-center gap-2 border rounded-sm font-bold uppercase transition-all active:scale-95 text-xs tracking-widest
+                              ${portalIsRed 
+                                  ? 'bg-red-950/80 border-red-700 text-red-200 hover:bg-red-900 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)]' 
+                                  : 'bg-slate-800/80 border-slate-600 text-slate-200 hover:bg-slate-700 hover:shadow-[0_0_15px_rgba(148,163,184,0.3)]'}`}>
+                              <Sword size={16} className={portalIsRed ? "text-red-500" : "text-slate-400"} />
+                              <span>Atacar</span>
+                          </button>
+                          <button 
+                              onClick={handleSkill}
+                              className={`flex-1 flex flex-col items-center justify-center gap-0.5 border rounded-sm font-bold uppercase transition-all active:scale-95 text-[10px] tracking-widest px-1
+                              ${gameState.playerClass 
+                                  ? (portalIsRed 
+                                      ? 'bg-purple-950/80 border-purple-800 text-purple-200 hover:bg-purple-900 hover:shadow-[0_0_15px_rgba(147,51,234,0.5)]' 
+                                      : 'bg-indigo-950/80 border-indigo-600 text-indigo-300 hover:bg-indigo-900 hover:shadow-[0_0_15px_rgba(99,102,241,0.3)]') 
+                                  : (portalIsRed
+                                      ? 'bg-red-950/40 border-red-900/50 text-red-900/50'
+                                      : 'bg-black/40 border-slate-800 text-slate-600')}`}>
+                              <div className="flex items-center gap-1">
+                                  {gameState.playerClass && <Zap size={12} className={portalIsRed ? "text-purple-400" : "text-indigo-400"} />}
+                                  <span className="w-full truncate text-center block">
+                                      {gameState.playerClass ? gameState.playerClass.baseSkill.name : 'SEM CLASSE'}
+                                  </span>
+                              </div>
+                          </button>
+                      </div>
                   </div>
              </div>
         </div>
