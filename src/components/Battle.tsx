@@ -278,17 +278,17 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
     const hpPercent = Math.max(0, (gameState.currentHp / combatStats.maxHp) * 100);
     const enemyHpPercent = Math.max(0, (enemyHp / enemy.maxHp) * 100);
 
-    // Theme Variables - Rustic Dungeon RPG Style
-    const frameBg = portalIsRed ? 'bg-[linear-gradient(to_bottom,#1c0c0c,#0a0505)]' : 'bg-[linear-gradient(to_bottom,#1a1c22,#0a0c10)]';
-    const frameBorder = portalIsRed ? 'border-[#5a1c1c]' : 'border-[#3a4252]';
-    const textTitleColor = portalIsRed ? 'text-[#ff6666]' : 'text-[#c9d1d9]';
-    const textSubtitleColor = portalIsRed ? 'text-[#cc7777]' : 'text-[#8b949e]';
+    // Theme Variables - Rustic Dungeon RPG Style (Pixel Art Version)
+    const frameBg = portalIsRed ? 'bg-[#210]' : 'bg-[#111]';
+    const frameBorder = portalIsRed ? 'border-red-900 border-4' : 'border-gray-600 border-4';
+    const textTitleColor = portalIsRed ? 'text-red-500' : 'text-white';
+    const textSubtitleColor = portalIsRed ? 'text-red-400' : 'text-gray-400';
     
     // Heavy Button Styles
-    const heavyButtonClasses = `transition-all active:scale-95 shadow-[4px_4px_0_rgba(0,0,0,0.8)] hover:shadow-[2px_2px_0_rgba(0,0,0,0.9)] hover:translate-x-[2px] hover:translate-y-[2px] rounded-sm font-bold uppercase text-center flex items-center justify-center border-t border-l border-b-4 border-r-2`;
+    const heavyButtonClasses = `transition-none active:translate-y-1 pixel-box font-bold uppercase text-center flex items-center justify-center border-4 h-full`;
 
     return (
-        <div className="h-full flex flex-col items-center justify-between p-2 sm:p-4 max-w-5xl mx-auto w-full relative z-0 overflow-hidden text-gray-200 font-serif">
+        <div className="h-full flex flex-col items-center justify-between p-2 sm:p-4 max-w-5xl mx-auto w-full relative z-0 overflow-hidden text-gray-200 font-mono">
              
              {/* Deep Cavern Environment */}
              {/* Base Darkness */}
@@ -359,9 +359,9 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
              )}
 
              {/* Header Stone Panel */}
-             <div className={`w-full z-10 flex justify-between items-center shrink-0 p-3 mb-2 shadow-[0_10px_20px_rgba(0,0,0,0.8)] border-b-4 border-double ${portalIsRed ? 'bg-[#1c0c0c] border-[#4a1c1c]' : 'bg-[#141518] border-[#2d3748]'}`}>
+             <div className={`w-full z-10 flex justify-between items-center shrink-0 p-3 mb-2 pixel-box ${portalIsRed ? 'bg-[#210] border-4 border-red-900' : 'bg-[#111] border-4 border-white'}`}>
                  <div className="flex flex-col">
-                     <h1 className={`text-sm sm:text-lg font-black tracking-widest uppercase items-center gap-2 drop-shadow-md ${textTitleColor}`}>
+                     <h1 className={`text-sm sm:text-lg font-black tracking-widest uppercase items-center gap-2 drop-shadow-[2px_2px_0_rgba(0,0,0,1)] ${textTitleColor}`}>
                          {portalIsRed ? 'DOMÍNIO DE SANGUE' : 'MASMORRA ESQUECIDA'}
                      </h1>
                      <div className={`text-[9px] sm:text-[10px] tracking-wide uppercase font-bold mt-0.5 ${textSubtitleColor}`}>
@@ -373,23 +373,23 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
                     className={`px-4 sm:px-6 py-2 sm:py-3 text-[10px] sm:text-xs z-20
                      ${heavyButtonClasses}
                      ${portalIsRed 
-                         ? 'border-t-[#8a2c2c] border-l-[#8a2c2c] border-b-[#300a0a] border-r-[#300a0a] bg-[#4a1010] text-[#ffb0b0] hover:bg-[#5a1414]' 
-                         : 'border-t-[#5a6a7a] border-l-[#5a6a7a] border-b-[#1a2530] border-r-[#1a2530] bg-[#2a3540] text-[#c0d0e0] hover:bg-[#354250]'}`}>
+                         ? 'border-red-600 bg-black text-red-500 hover:bg-red-900 hover:text-white' 
+                         : 'border-white bg-black text-white hover:bg-white hover:text-black'}`}>
                      Recuar
                  </button>
              </div>
              
              {/* Enemy Altar / Pedestal Block */}
-             <div className={`w-full max-w-sm sm:max-w-md flex flex-col items-center p-6 mt-auto mb-auto relative border-4 border-double shadow-[8px_8px_0_rgba(0,0,0,0.8)]
+             <div className={`w-full max-w-sm sm:max-w-md flex flex-col items-center p-6 mt-auto mb-auto relative pixel-box
                  ${frameBg} ${frameBorder}`}>
                      
                  {/* Decorative rustic corners (iron bolts) */}
-                 <div className="absolute top-2 left-2 w-2.5 h-2.5 rounded-full bg-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]"></div>
-                 <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]"></div>
-                 <div className="absolute bottom-2 left-2 w-2.5 h-2.5 rounded-full bg-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]"></div>
-                 <div className="absolute bottom-2 right-2 w-2.5 h-2.5 rounded-full bg-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]"></div>
+                 <div className="absolute top-2 left-2 w-2.5 h-2.5 bg-black"></div>
+                 <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-black"></div>
+                 <div className="absolute bottom-2 left-2 w-2.5 h-2.5 bg-black"></div>
+                 <div className="absolute bottom-2 right-2 w-2.5 h-2.5 bg-black"></div>
 
-                 <div className={`text-center font-black text-lg sm:text-2xl uppercase tracking-widest drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] ${textTitleColor}`}>
+                 <div className={`text-center font-black text-lg sm:text-2xl uppercase tracking-widest drop-shadow-[2px_2px_0_rgba(0,0,0,1)] ${textTitleColor}`}>
                      {enemy.name}
                  </div>
                  <div className={`text-[10px] sm:text-xs uppercase tracking-widest mt-1 mb-2 font-bold ${textSubtitleColor}`}>
@@ -397,16 +397,16 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
                  </div>
                  
                  <div className={`w-40 h-40 sm:w-56 sm:h-56 relative transition-transform duration-300 my-2
-                     ${enemyAnimState === 'attack' ? 'scale-110 mb-4 drop-shadow-[0_20px_20px_rgba(0,0,0,0.9)]' : enemyAnimState === 'hurt' ? 'scale-95 brightness-150' : 'scale-100'}
+                     ${enemyAnimState === 'attack' ? 'scale-110 mb-4' : enemyAnimState === 'hurt' ? 'scale-95 brightness-150' : 'scale-100'}
                  `}>
                      <MonsterCanvas isSecret={enemy.isSecret || false} isBoss={enemy.isBoss || false} state={enemyAnimState} portalIsRed={portalIsRed} />
                  </div>
 
                  {/* Enemy Heavy HP Bar */}
                  <div className="w-full mt-4 max-w-[280px]">
-                     <div className={`h-6 bg-[#0a0a0c] border-[3px] w-full relative overflow-hidden shadow-[inset_0_4px_6px_rgba(0,0,0,0.9)] ${portalIsRed ? 'border-[#3a1010]' : 'border-[#1a2530]'}`}>
-                         <div className={`h-full transition-all duration-300 bg-[linear-gradient(to_bottom,#dc2626,#7f1d1d)]`} style={{ width: `${enemyHpPercent}%` }}></div>
-                         <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,1)] tracking-widest">
+                     <div className={`h-6 bg-black border-4 w-full relative overflow-hidden pixel-box ${portalIsRed ? 'border-red-900' : 'border-gray-600'}`}>
+                         <div className={`h-full transition-none bg-red-600`} style={{ width: `${enemyHpPercent}%` }}></div>
+                         <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">
                              {Math.floor(enemyHp)} / {enemy.maxHp}
                          </span>
                      </div>
@@ -417,37 +417,37 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
              <div className="w-full z-10 flex flex-col lg:flex-row gap-4 h-auto lg:h-[200px] shrink-0 mt-4">
                   
                   {/* Logs Panel */}
-                  <div className={`flex-1 p-4 flex flex-col-reverse justify-start overflow-y-auto custom-scrollbar border-4 border-double shadow-[8px_8px_0_rgba(0,0,0,0.8)]
+                  <div className={`flex-1 p-4 flex flex-col-reverse justify-start overflow-y-auto custom-scrollbar pixel-box font-sans
                       ${frameBg} ${frameBorder}`}>
-                      <h3 className={`text-xs font-black uppercase border-b-2 pb-2 mb-2 tracking-wider flex items-center gap-2 sticky top-0 bg-transparent z-10 
-                          ${textTitleColor} ${portalIsRed ? 'border-[#4a1c1c]' : 'border-[#2d3748]'}`}>
+                      <h3 className={`text-xs font-black uppercase border-b-4 pb-2 mb-2 tracking-wider flex items-center gap-2 sticky top-0 bg-black z-10 font-mono
+                          ${textTitleColor} ${portalIsRed ? 'border-red-900' : 'border-gray-600'}`}>
                            Percepção de Combate
                       </h3>
                       {[...logs].reverse().map(l => (
                           <div key={l.id} className={`text-[10px] sm:text-xs mb-1.5 tracking-wide font-medium
-                              ${l.type === 'reward' ? 'text-[#eab308] font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]' 
-                              : l.type === 'dmg' ? 'text-[#ef4444] font-bold' 
-                              : (portalIsRed ? 'text-[#e0a0a0]' : 'text-[#b0c0d0]')}`}>
+                              ${l.type === 'reward' ? 'text-yellow-400 font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]' 
+                              : l.type === 'dmg' ? 'text-red-500 font-bold' 
+                              : (portalIsRed ? 'text-red-300' : 'text-white')}`}>
                               {l.text}
                           </div>
                       ))}
                   </div>
 
                   {/* Player Stats & Actions Container */}
-                  <div className={`w-full lg:w-[350px] flex flex-col gap-3 shrink-0 p-4 border-4 border-double shadow-[8px_8px_0_rgba(0,0,0,0.8)]
+                  <div className={`w-full lg:w-[350px] flex flex-col gap-3 shrink-0 p-4 pixel-box
                       ${frameBg} ${frameBorder}`}>
                       
-                      <h3 className={`text-xs font-black uppercase border-b-2 pb-2 tracking-wider flex items-center gap-2
-                          ${textTitleColor} ${portalIsRed ? 'border-[#4a1c1c]' : 'border-[#2d3748]'}`}>
+                      <h3 className={`text-xs font-black uppercase border-b-4 pb-2 tracking-wider flex items-center gap-2
+                          ${textTitleColor} ${portalIsRed ? 'border-red-900' : 'border-gray-600'}`}>
                           Corpo do Caçador
                       </h3>
 
                       <div className="space-y-3 mt-1">
                           {/* HP Heavy Bar */}
                           <div>
-                              <div className={`h-6 bg-[#0a0a0c] border-[3px] w-full relative overflow-hidden shadow-[inset_0_4px_6px_rgba(0,0,0,0.9)] ${portalIsRed ? 'border-[#3a1010]' : 'border-[#1a2530]'}`}>
-                                  <div className="h-full transition-all duration-300 bg-[linear-gradient(to_bottom,#22c55e,#14532d)]" style={{ width: `${hpPercent}%` }}></div>
-                                  <span className="absolute inset-0 flex items-center justify-between px-3 text-[10px] font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,1)] tracking-widest">
+                              <div className={`h-6 bg-black border-4 w-full relative overflow-hidden pixel-box ${portalIsRed ? 'border-red-900' : 'border-gray-600'}`}>
+                                  <div className="h-full transition-none bg-green-500" style={{ width: `${hpPercent}%` }}></div>
+                                  <span className="absolute inset-0 flex items-center justify-between px-3 text-[10px] font-bold text-white drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">
                                       <span>VITALIDADE</span>
                                       <span>{Math.floor(gameState.currentHp)}/{combatStats.maxHp}</span>
                                   </span>
@@ -457,17 +457,17 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
                           {/* Mana & Energy Heavy Bars */}
                           <div className="flex gap-4">
                               <div className="flex-1">
-                                  <div className={`h-5 bg-[#0a0a0c] border-[2px] w-full relative overflow-hidden shadow-[inset_0_4px_6px_rgba(0,0,0,0.9)] ${portalIsRed ? 'border-[#3a1010]' : 'border-[#1a2530]'}`}>
-                                      <div className="h-full bg-[linear-gradient(to_bottom,#3b82f6,#1e3a8a)] transition-all duration-300" style={{ width: `${(gameState.currentMana / combatStats.maxMana) * 100}%` }}></div>
-                                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,1)] tracking-widest">
+                                  <div className={`h-5 bg-black border-2 w-full relative overflow-hidden pixel-box ${portalIsRed ? 'border-red-900' : 'border-gray-600'}`}>
+                                      <div className="h-full bg-blue-500 transition-none" style={{ width: `${(gameState.currentMana / combatStats.maxMana) * 100}%` }}></div>
+                                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">
                                           MANA {Math.floor(gameState.currentMana)}
                                       </span>
                                   </div>
                               </div>
                               <div className="flex-1">
-                                  <div className={`h-5 bg-[#0a0a0c] border-[2px] w-full relative overflow-hidden shadow-[inset_0_4px_6px_rgba(0,0,0,0.9)] ${portalIsRed ? 'border-[#3a1010]' : 'border-[#1a2530]'}`}>
-                                      <div className="h-full bg-[linear-gradient(to_bottom,#eab308,#713f12)] transition-all duration-300" style={{ width: `${(gameState.currentEnergy / combatStats.maxEnergy) * 100}%` }}></div>
-                                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,1)] tracking-widest">
+                                  <div className={`h-5 bg-black border-2 w-full relative overflow-hidden pixel-box ${portalIsRed ? 'border-red-900' : 'border-gray-600'}`}>
+                                      <div className="h-full bg-yellow-500 transition-none" style={{ width: `${(gameState.currentEnergy / combatStats.maxEnergy) * 100}%` }}></div>
+                                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">
                                           VIGOR {Math.floor(gameState.currentEnergy)}
                                       </span>
                                   </div>
@@ -481,25 +481,25 @@ export const Battle = ({ enemy: initialEnemy, portalIsRed, onLeave }: BattleProp
                               onClick={handleAttack}
                               className={`flex-1 py-1 px-1 ${heavyButtonClasses}
                               ${portalIsRed 
-                                  ? 'border-t-[#8a2c2c] border-l-[#8a2c2c] border-b-[#300a0a] border-r-[#300a0a] bg-[#4a1010] text-[#ffb0b0] hover:bg-[#5a1414]' 
-                                  : 'border-t-[#5a6a7a] border-l-[#5a6a7a] border-b-[#1a2530] border-r-[#1a2530] bg-[#2a3540] text-[#c0d0e0] hover:bg-[#354250]'}`}>
+                                  ? 'border-red-600 bg-black text-red-500 hover:bg-red-500 hover:text-white' 
+                                  : 'border-white bg-black text-white hover:bg-white hover:text-black'}`}>
                               Golpe Básico
                           </button>
                           <button 
                               onClick={handleSkill}
                               className={`flex-1 py-1 px-1 ${heavyButtonClasses} text-[10px]
                               ${gameState.playerClass 
-                                  ? 'border-t-[#a855f7] border-l-[#a855f7] border-b-[#4c1d95] border-r-[#4c1d95] bg-[#581c87] text-[#e9d5ff] hover:bg-[#6b21a8]' 
+                                  ? 'border-purple-500 bg-black text-purple-400 hover:bg-purple-500 hover:text-white' 
                                   : (portalIsRed
-                                      ? 'bg-transparent border-t-[#300a0a] border-l-[#300a0a] border-b-[#1c0808] border-r-[#1c0808] text-[#5a1c1c] opacity-50'
-                                      : 'bg-transparent border-t-[#1a2530] border-l-[#1a2530] border-b-[#0b1016] border-r-[#0b1016] text-[#3a4a5a] opacity-50')}`}>
+                                      ? 'bg-black border-red-900 text-red-900 opacity-50'
+                                      : 'bg-black border-gray-600 text-gray-600 opacity-50')}`}>
                               <span className="w-full truncate px-1">
                                   {gameState.playerClass ? gameState.playerClass.baseSkill.name : 'Sem Classe'}
                               </span>
                           </button>
                       </div>
                   </div>
-             </div>
-        </div>
+              </div>
+         </div>
     )
 }
