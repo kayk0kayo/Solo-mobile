@@ -1,31 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-mono: "Press Start 2P", monospace;
-  --font-sans: "Press Start 2P", monospace;
+  --font-mono: "Chakra Petch", monospace;
+  --font-sans: "Chakra Petch", sans-serif;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #0a0a0f;
-  color: #fff;
+  background-color: #010915;
+  color: #c9e0ff;
   overscroll-behavior-y: none;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #0a0a0f; 
-  border-left: 2px solid #2b2b36;
+  background: rgba(2, 17, 36, 0.8); 
+  border-left: 1px solid rgba(0, 64, 128, 0.5);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b4b56; 
-  border: 1px solid #2b2b36;
+  background: rgba(3, 219, 252, 0.5); 
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b6b76; 
+  background: rgba(3, 219, 252, 1); 
+  box-shadow: 0 0 10px rgba(3, 219, 252, 0.8);
 }

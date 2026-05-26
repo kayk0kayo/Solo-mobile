@@ -34,41 +34,40 @@ export const Layout = () => {
   };
 
   return (
-    <div className="flex flex-row h-[100dvh] w-full bg-[#111115] text-[#d0d0c0] font-mono select-none overflow-hidden" 
-         style={{ backgroundImage: 'radial-gradient(circle at center, #1a1a24 0%, #0a0a0f 100%)' }}>
+    <div className="flex flex-row h-[100dvh] w-full bg-[#010915] text-[#c9e0ff] font-sans select-none overflow-hidden" 
+         style={{ backgroundImage: 'radial-gradient(circle at center, #021124 0%, #010915 100%)' }}>
       
       {/* Sidebar Navigation */}
-      <div className="flex-none flex flex-col w-[140px] sm:w-[180px] md:w-[220px] bg-[#0a0a0f] border-r-4 border-[#2b2b36] shadow-md shadow-black z-10">
-         <div className="p-2 border-b-4 border-[#2b2b36] flex flex-col gap-2 shrink-0">
+      <div className="flex-none flex flex-col w-[140px] sm:w-[180px] md:w-[220px] bg-[#020d1a]/80 backdrop-blur-md border-r border-[#004080] shadow-[0_0_20px_rgba(0,10,20,0.5)] z-10">
+         <div className="p-3 border-b border-[#004080] flex flex-col gap-2 shrink-0 bg-gradient-to-b from-[#001732] to-transparent">
             <div className="flex gap-2 items-center">
-                <div className="w-10 h-10 bg-[#1a1a24] border-2 border-[#4b4b56] flex items-center justify-center font-bold text-sm text-purple-400 shrink-0"
-                     style={{ boxShadow: 'inset 2px 2px 0px rgba(255,255,255,0.1), inset -2px -2px 0px rgba(0,0,0,0.5)' }}>
+                <div className="w-10 h-10 bg-[#001c3d] border border-cyan-500/50 flex items-center justify-center font-bold text-sm text-cyan-300 shrink-0 shadow-[0_0_10px_rgba(3,219,252,0.3)] transform -skew-x-6">
                    {state.level}
                 </div>
                 <div className="overflow-hidden">
-                   <h1 className="text-[10px] font-bold uppercase tracking-wide text-red-500 truncate">
+                   <h1 className="text-[11px] font-black uppercase tracking-widest text-[#03dbfc] truncate drop-shadow-[0_0_5px_rgba(3,219,252,0.8)]">
                      Rank {state.rank}
                    </h1>
-                   <div className="text-[8px] text-gray-400 truncate">
-                     {state.playerClass ? state.playerClass.name : 'Sem Classe'}
+                   <div className="text-[9px] text-blue-200/70 truncate uppercase tracking-widest mt-0.5">
+                     {state.playerClass ? state.playerClass.name : 'SEM CLASSE'}
                    </div>
                 </div>
             </div>
-            <div className="flex flex-col text-[8px] sm:text-[10px] gap-1">
-               <span className="text-yellow-500 font-bold flex items-center gap-1"><Gem size={10}/>{state.gold}</span>
-               <span className="text-cyan-400 font-bold flex items-center gap-1"><Hexagon size={10}/>{state.manaCrystals}</span>
+            <div className="flex flex-col text-[10px] gap-1 mt-1">
+               <span className="text-yellow-400 font-bold flex items-center gap-1 drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]"><Gem size={10}/>{state.gold}</span>
+               <span className="text-[#03dbfc] font-bold flex items-center gap-1 drop-shadow-[0_0_5px_rgba(3,219,252,0.5)]"><Hexagon size={10}/>{state.manaCrystals}</span>
             </div>
          </div>
          
-         <div className="flex-grow overflow-y-auto custom-scrollbar flex flex-col">
+         <div className="flex-grow overflow-y-auto custom-scrollbar flex flex-col p-2 gap-1">
              {TABS.map(tab => (
                <button
                  key={tab}
                  onClick={() => setActiveTab(tab)}
-                 className={`p-3 text-left border-l-4 transition-colors text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-wider
-                            ${activeTab === tab ? 'bg-[#2b2b36] text-white border-purple-500' : 'border-transparent text-gray-500 hover:bg-[#1a1a24] hover:text-gray-300'}`}
+                 className={`relative p-3 text-left transition-all text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider transform -skew-x-6 origin-left
+                            ${activeTab === tab ? 'bg-gradient-to-r from-cyan-900/40 to-transparent text-[#03dbfc] border-l-2 border-[#03dbfc] shadow-[inset_0_0_15px_rgba(3,219,252,0.1)]' : 'border-l-2 border-transparent text-blue-300/50 hover:bg-cyan-900/10 hover:text-cyan-100 hover:border-[#004080]'}`}
                >
-                 {tab}
+                 <span className="transform skew-x-6 block">{tab}</span>
                </button>
              ))}
          </div>
@@ -76,8 +75,8 @@ export const Layout = () => {
 
       {/* Main Content Area */}
       <div className="flex-grow overflow-y-auto p-2 sm:p-4 custom-scrollbar relative z-0">
-          <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay"
-               style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #000 2px, #000 4px)' }}>
+          <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-overlay"
+               style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #03dbfc 2px, #03dbfc 3px)', backgroundSize: '100% 4px' }}>
           </div>
           <div className="h-full relative z-10 w-full max-w-5xl mx-auto flex flex-col">
               {renderTab()}
