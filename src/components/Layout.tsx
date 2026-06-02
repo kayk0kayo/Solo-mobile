@@ -8,23 +8,25 @@ import { Upgrades } from './Upgrades';
 import { ClassRoll } from './ClassRoll';
 import { Portals } from './Portals';
 import { Battle } from './Battle';
+import { Training } from './Training';
 import { Monster } from '../types';
 
 export const Layout = () => {
   const { state } = useGame();
   const [activeTab, setActiveTab] = useState('Status');
-  const [battleEnemy, setBattleEnemy] = useState<{ monster: Monster, portalIsRed: boolean } | null>(null);
+  const [battleEnemy, setBattleEnemy] = useState<{ monster: Monster, portalIsRed: boolean, isTraining?: boolean } | null>(null);
 
   if (battleEnemy) {
-    return <Battle enemy={battleEnemy.monster} portalIsRed={battleEnemy.portalIsRed} onLeave={() => setBattleEnemy(null)} />;
+    return <Battle enemy={battleEnemy.monster} portalIsRed={battleEnemy.portalIsRed} isTraining={battleEnemy.isTraining} onLeave={() => setBattleEnemy(null)} />;
   }
 
-  const TABS = ['Status', 'Inventário', 'Portais', 'Classes', 'Loja', 'Melhorias'];
+  const TABS = ['Status', 'Inventário', 'Treinamento', 'Portais', 'Classes', 'Loja', 'Melhorias'];
 
   const renderTab = () => {
     switch (activeTab) {
       case 'Status': return <Status />;
       case 'Inventário': return <Inventory />;
+      case 'Treinamento': return <Training onEnterBattle={(m, red) => setBattleEnemy({ monster: m, portalIsRed: red, isTraining: true })} />;
       case 'Portais': return <Portals onEnterPortal={(m, red) => setBattleEnemy({ monster: m, portalIsRed: red })} />;
       case 'Classes': return <ClassRoll />;
       case 'Loja': return <Shop />;
@@ -38,33 +40,33 @@ export const Layout = () => {
       
       {/* Sidebar Navigation */}
       <div className="flex-none flex flex-col w-[140px] sm:w-[180px] md:w-[220px] bg-[#111] border-r-4 border-[#333] z-10 pixel-box">
-         <div className="p-3 border-b-4 border-[#333] flex flex-col gap-2 shrink-0 bg-black">
+          <div className="p-3 border-b-4 border-white flex flex-col gap-2 shrink-0 bg-black">
             <div className="flex gap-2 items-center">
-                <div className="w-10 h-10 bg-black border-2 border-white flex items-center justify-center font-bold text-sm text-white shrink-0 drop-shadow-[2px_2px_0_rgba(255,255,255,0.3)]">
+                <div className="w-10 h-10 bg-black border-4 border-white flex items-center justify-center font-bold text-sm text-white shrink-0 shadow-[2px_2px_0_rgba(255,255,255,1)]">
                    {state.level}
                 </div>
                 <div className="overflow-hidden">
-                   <h1 className="text-[11px] font-black uppercase tracking-widest text-[#03dbfc] truncate drop-shadow-[2px_2px_0_rgba(3,219,252,0.5)]">
+                   <h1 className="text-[11px] font-black uppercase tracking-widest text-white truncate drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">
                      Rank {state.rank}
                    </h1>
-                   <div className="text-[9px] text-gray-300 truncate uppercase tracking-widest mt-0.5">
+                   <div className="text-[9px] text-gray-400 truncate uppercase tracking-widest mt-0.5">
                      {state.playerClass ? state.playerClass.name : 'SEM CLASSE'}
                    </div>
                 </div>
             </div>
-            <div className="flex flex-col text-[10px] gap-1 mt-1">
-               <span className="text-yellow-400 font-bold flex items-center gap-1 drop-shadow-[2px_2px_0_rgba(250,204,21,0.5)]"><Gem size={10}/>{state.gold}</span>
-               <span className="text-[#03dbfc] font-bold flex items-center gap-1 drop-shadow-[2px_2px_0_rgba(3,219,252,0.5)]"><Hexagon size={10}/>{state.manaCrystals}</span>
+            <div className="flex flex-col text-[10px] gap-1 mt-1 font-mono">
+               <span className="text-yellow-500 font-bold flex items-center gap-1"><Gem size={10}/>{state.gold}</span>
+               <span className="text-blue-400 font-bold flex items-center gap-1"><Hexagon size={10}/>{state.manaCrystals}</span>
             </div>
          </div>
          
-         <div className="flex-grow overflow-y-auto custom-scrollbar flex flex-col p-2 gap-1">
+         <div className="flex-grow overflow-y-auto custom-scrollbar flex flex-col p-2 gap-1 font-mono">
              {TABS.map(tab => (
                <button
                  key={tab}
                  onClick={() => setActiveTab(tab)}
                  className={`relative p-3 text-left transition-none text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider
-                            ${activeTab === tab ? 'bg-[#333] text-white border-l-4 border-white pixel-box' : 'border-l-4 border-transparent text-gray-400 hover:bg-[#222] hover:text-white hover:border-gray-500'}`}
+                            ${activeTab === tab ? 'bg-white text-black border-4 border-white pixel-box text-glow-active' : 'border-4 border-transparent text-gray-500 hover:bg-[#222] hover:text-white hover:border-gray-600'}`}
                >
                  <span className="block">{tab}</span>
                </button>

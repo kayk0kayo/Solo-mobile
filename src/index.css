@@ -1,43 +1,167 @@
-@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-mono: "VT323", monospace;
-  --font-sans: "Silkscreen", sans-serif;
-  --font-serif: "Silkscreen", sans-serif;
+  --font-sans: '"Press Start 2P"', monospace;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #000000;
-  color: #c9e0ff;
+  background-color: #030303;
+  color: #c0c0c0;
   overscroll-behavior-y: none;
-  image-rendering: pixelated;
+  image-rendering: pixelated !important;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  background-image: url("data:image/svg+xml;utf8,<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><rect width='8' height='8' fill='%230a0a0a'/><rect x='8' y='8' width='8' height='8' fill='%230a0a0a'/><rect x='8' width='8' height='8' fill='%23030303'/><rect y='8' width='8' height='8' fill='%23030303'/></svg>");
+  background-size: 32px 32px;
+  animation: bg-pan 30s linear infinite;
 }
 
+@keyframes bg-pan {
+  from { background-position: 0 0; }
+  to { background-position: -320px 320px; }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)),
+    radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.25) 100%);
+  background-size: 100% 4px, 3px 100%, 100% 100%;
+  z-index: 100;
+  animation: scanlines 10s linear infinite;
+}
+
+@keyframes scanlines {
+  0% { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: 0 400px, 0 0, 0 0; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  letter-spacing: 1px;
+}
+
+.image-pixelated {
+    image-rendering: pixelated !important;
+}
+canvas, img {
+    image-rendering: pixelated !important; /* Keep canvas and sprite images pixelated */
+}
+
+/* Beautiful Custom Scrollbar - Retro Pixel style */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #111; 
+  background: #090909; 
+  border-left: 2px solid #222;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #444; 
+  background: #333; 
+  border: 2px solid #555;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #666; 
+  background: #555; 
 }
 
-/* Pixel Border Utility */
-.pixel-border {
-  border: 4px solid #fff;
-  border-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><path d='M0,4 h4 v-4 h4 v4 h4 v4 h-4 v4 h-4 v-4 h-4 z' fill='%23ffffff' /></svg>") 4 stretch;
-}
+/* Redefine the core aesthetics */
 .pixel-box {
+  border: 12px solid transparent !important;
+  border-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><path d='M4,4 h16 v16 h-16 z M0,4 h4 v16 h-4 z M20,4 h4 v16 h-4 z M4,0 h16 v4 h-16 z M4,20 h16 v4 h-16 z' fill='%231a1a1a' /><path d='M4,4 h16 v4 h-16 z M4,4 h4 v16 h-4 z' fill='%23333333' /><path d='M20,4 h-4 v16 h4 z M20,20 h-16 v-4 h16 z' fill='%23050505' /></svg>") 8 stretch !important;
   box-shadow: 
-    inset -4px -4px 0px 0px rgba(0,0,0,0.5),
-    inset 4px 4px 0px 0px rgba(255,255,255,0.2);
+    inset -4px -4px 0px 0px rgba(0,0,0,0.8),
+    inset 4px 4px 0px 0px rgba(255,255,255,0.02),
+    0 4px 10px rgba(0,0,0,0.9) !important;
+  image-rendering: pixelated !important;
+  position: relative;
+  border-radius: 0 !important;
+  animation: crt-flicker 0.15s infinite;
 }
 
+@keyframes crt-flicker {
+  0% { opacity: 0.98; }
+  50% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+/* Base button and interactive styles using hover targets */
+button:active {
+  transform: translateY(2px);
+}
+
+.hover\:border-gray-600:hover {
+  border-color: #555 !important;
+  text-shadow: 2px 2px 0px rgba(0,0,0,1);
+  transform: scale(1.02);
+  transition: transform 0.1s;
+}
+
+@keyframes intense-shake {
+  0% { transform: translate(12px, 8px) rotate(-3deg) scale(0.9); filter: brightness(1.7) sepia(1) hue-rotate(-50deg) saturate(3); }
+  20% { transform: translate(-15px, -12px) rotate(4deg) scale(0.95); filter: brightness(2) contrast(1.5); }
+  40% { transform: translate(15px, -10px) rotate(-4deg) scale(0.9); filter: brightness(1.7) sepia(1) hue-rotate(-50deg) saturate(3); }
+  60% { transform: translate(-10px, 15px) rotate(3deg) scale(0.95); filter: brightness(2) contrast(1.5); }
+  80% { transform: translate(8px, -8px) rotate(-2deg) scale(0.95); filter: brightness(1.5); }
+  100% { transform: translate(0, 0) rotate(0) scale(1); filter: none; }
+}
+
+.animate-intense-shake {
+  animation: intense-shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  20% { transform: translateY(-10px) scale(1.2); opacity: 1; }
+  80% { transform: translateY(-40px) scale(1); opacity: 1; }
+  100% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+}
+
+.animate-float-up {
+  animation: float-up 1.5s ease-out forwards;
+}
+
+@keyframes text-glow-pulse {
+  0% { text-shadow: 0 0 4px rgba(255, 255, 255, 0.4), 0 0 10px rgba(255, 255, 255, 0.2); }
+  50% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4); }
+  100% { text-shadow: 0 0 4px rgba(255, 255, 255, 0.4), 0 0 10px rgba(255, 255, 255, 0.2); }
+}
+
+.text-glow-active {
+  animation: text-glow-pulse 2s infinite ease-in-out;
+}
+
+/* We don't need to override border widths since we are back to thick pixel borders, but we can style backgrounds directly */
+.bg-\[\#111\] { background-color: #0c0c0c !important; }
+.bg-\[\#222\] { background-color: #1a1a1a !important; }
+.bg-\[\#333\] { background-color: #2b2b2b !important; }
+.bg-\[\#0a0a0a\] { background-color: #050505 !important; }
+.bg-black { background-color: #000000 !important; }
+
+/* Keep some glow for borders if needed but make it dim */
+.border-white, .border-\[\#fff\] {
+  border-color: #333 !important;
+}
+
+/* Boss/Secret Portal specific darker mapping */
+.bg-\[\#210\], .bg-\[\#2a0808\] {
+  background-color: #0c0202 !important;
+}
+.border-red-900 {
+  border-color: #2a0505 !important;
+}
+
+.pixel-box.border-red-900 {
+  border-color: #3a1515 #110000 #110000 #3a1515 !important;
+}

@@ -28,31 +28,31 @@ export const Status = () => {
                     <span className="text-gray-400 text-[10px] sm:text-xs uppercase">{levelsToNextRank(state.level)} Níveis Próx. Rank</span>
                 </div>
                 {/* Exp Bar */}
-                <div className="h-6 bg-[#333] border-4 border-white w-full relative shrink-0 pixel-box">
-                    <div className="h-full bg-blue-600" style={{ width: `${xpPercent}%` }}></div>
-                    <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">EXP {Math.floor(state.xp)}/{state.xpNeeded}</span>
+                <div className="h-8 bg-black border-4 border-white w-full relative shrink-0 pixel-box">
+                    <div className="h-full bg-gradient-to-r from-blue-700 to-blue-400" style={{ width: `${xpPercent}%` }}></div>
+                    <span className="absolute inset-0 flex items-center justify-center text-xs text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">EXP {Math.floor(state.xp)}/{state.xpNeeded}</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mt-2 shrink-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 shrink-0">
                     <div>
-                        <div className="text-[10px] sm:text-xs text-white font-bold uppercase tracking-wide mb-1">HP</div>
-                        <div className="h-6 bg-[#333] border-4 border-white w-full relative pixel-box">
-                            <div className="h-full bg-red-600" style={{ width: `${hpPercent}%` }}></div>
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">{Math.floor(state.currentHp)}/{combatStats.maxHp}</span>
+                        <div className="text-xs text-white font-bold uppercase tracking-wide mb-1 flex items-center gap-2"><span className="w-2 h-2 bg-red-500 inline-block"></span> HP</div>
+                        <div className="h-8 bg-black border-4 border-white w-full relative pixel-box">
+                            <div className="h-full bg-gradient-to-r from-red-700 to-red-500" style={{ width: `${hpPercent}%` }}></div>
+                            <span className="absolute inset-0 flex items-center justify-center text-xs text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">{Math.floor(state.currentHp)}/{combatStats.maxHp}</span>
                         </div>
                     </div>
                     <div>
-                        <div className="text-[10px] sm:text-xs text-white font-bold uppercase tracking-wide mb-1">Mana</div>
-                        <div className="h-6 bg-[#333] border-4 border-white w-full relative pixel-box">
-                            <div className="h-full bg-blue-500" style={{ width: `${mpPercent}%` }}></div>
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">{Math.floor(state.currentMana)}/{combatStats.maxMana}</span>
+                        <div className="text-xs text-white font-bold uppercase tracking-wide mb-1 flex items-center gap-2"><span className="w-2 h-2 bg-blue-500 inline-block"></span> Mana</div>
+                        <div className="h-8 bg-black border-4 border-white w-full relative pixel-box">
+                            <div className="h-full bg-gradient-to-r from-blue-700 to-blue-500" style={{ width: `${mpPercent}%` }}></div>
+                            <span className="absolute inset-0 flex items-center justify-center text-xs text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">{Math.floor(state.currentMana)}/{combatStats.maxMana}</span>
                         </div>
                     </div>
-                    <div className="col-span-2">
-                        <div className="text-[10px] sm:text-xs text-white font-bold uppercase tracking-wide mb-1">Energia (Vigor)</div>
-                        <div className="h-6 bg-[#333] border-4 border-white w-full relative pixel-box">
-                            <div className="h-full bg-yellow-500" style={{ width: `${enPercent}%` }}></div>
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">{Math.floor(state.currentEnergy)}/{combatStats.maxEnergy}</span>
+                    <div className="col-span-1 sm:col-span-2">
+                        <div className="text-xs text-white font-bold uppercase tracking-wide mb-1 flex items-center gap-2"><span className="w-2 h-2 bg-yellow-500 inline-block"></span> Energia (Vigor)</div>
+                        <div className="h-8 bg-black border-4 border-white w-full relative pixel-box">
+                            <div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" style={{ width: `${enPercent}%` }}></div>
+                            <span className="absolute inset-0 flex items-center justify-center text-xs text-white font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)] tracking-widest">{Math.floor(state.currentEnergy)}/{combatStats.maxEnergy}</span>
                         </div>
                     </div>
                 </div>

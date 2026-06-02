@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useGame } from '../GameContext';
 import { Item, Skill } from '../types';
+import { getIcon } from '../lib/itemIcons';
+import { PixelImage } from './PixelImage';
 
 export const Inventory = () => {
     const { state, dispatch } = useGame();
@@ -45,22 +47,55 @@ export const Inventory = () => {
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col items-center bg-[#222] p-2 border-4 border-gray-600 relative overflow-hidden group pixel-box">
                             <span className="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Arma</span>
-                            <div className="text-xs text-white text-center break-words w-full font-bold">
-                                {state.equipped.weapon ? state.equipped.weapon.name : 'VAZIO'}
-                                {state.equipped.weapon && <div className="text-[10px] text-red-500 mt-1">Dano: +{state.equipped.weapon.stats?.damage}</div>}
+                            <div className="flex flex-col items-center gap-2 w-full">
+                                <div className="w-16 h-16 shrink-0 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden">
+                                    <PixelImage
+                                        src={state.equipped.weapon ? getIcon(state.equipped.weapon.id, 'weapon') : ''}
+                                        alt={state.equipped.weapon ? state.equipped.weapon.name : 'Vazio'}
+                                        itemType="weapon"
+                                        rank={state.equipped.weapon ? state.equipped.weapon.rank : 'E'}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="text-xs text-white text-center break-words w-full font-bold flex flex-col items-center">
+                                    {state.equipped.weapon ? state.equipped.weapon.name : 'VAZIO'}
+                                    {state.equipped.weapon && <div className="text-[10px] text-red-500 mt-1">Dano: +{state.equipped.weapon.stats?.damage}</div>}
+                                </div>
                             </div>
                         </div>
                         <div className="flex flex-col items-center bg-[#222] p-2 border-4 border-gray-600 relative overflow-hidden group pixel-box">
                             <span className="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Armadura</span>
-                            <div className="text-xs text-white text-center break-words w-full font-bold">
-                                {state.equipped.armor ? state.equipped.armor.name : 'VAZIO'}
-                                {state.equipped.armor && <div className="text-[10px] text-blue-400 mt-1">Defesa: +{state.equipped.armor.stats?.defense}</div>}
+                            <div className="flex flex-col items-center gap-2 w-full">
+                                <div className="w-16 h-16 shrink-0 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden">
+                                    <PixelImage
+                                        src={state.equipped.armor ? getIcon(state.equipped.armor.id, 'armor') : ''}
+                                        alt={state.equipped.armor ? state.equipped.armor.name : 'Vazio'}
+                                        itemType="armor"
+                                        rank={state.equipped.armor ? state.equipped.armor.rank : 'E'}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="text-xs text-white text-center break-words w-full font-bold flex flex-col items-center">
+                                    {state.equipped.armor ? state.equipped.armor.name : 'VAZIO'}
+                                    {state.equipped.armor && <div className="text-[10px] text-blue-400 mt-1">Defesa: +{state.equipped.armor.stats?.defense}</div>}
+                                </div>
                             </div>
                         </div>
-                        <div className="flex flex-col items-center bg-[#222] p-2 border-4 border-gray-600 relative overflow-hidden group pixel-box">
+                        <div className="flex flex-col items-center bg-[#222] p-2 border-4 border-gray-600 relative overflow-hidden group group-hover:border-white group-active:translate-y-1 pixel-box">
                             <span className="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Acessório</span>
-                            <div className="text-xs text-white text-center break-words w-full font-bold">
-                                {state.equipped.accessory ? state.equipped.accessory.name : 'VAZIO'}
+                            <div className="flex flex-col items-center gap-2 w-full">
+                                <div className="w-16 h-16 shrink-0 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden">
+                                    <PixelImage
+                                        src={state.equipped.accessory ? getIcon(state.equipped.accessory.id, 'accessory') : ''}
+                                        alt={state.equipped.accessory ? state.equipped.accessory.name : 'Vazio'}
+                                        itemType="accessory"
+                                        rank={state.equipped.accessory ? state.equipped.accessory.rank : 'E'}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="text-xs text-white text-center break-words w-full font-bold flex flex-col items-center">
+                                    {state.equipped.accessory ? state.equipped.accessory.name : 'VAZIO'}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -104,72 +139,133 @@ export const Inventory = () => {
                 </div>
 
                 {/* List */}
-                <div className="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-2 font-sans">
-                {subTab === 'weapons' && state.inventory.weapons.length === 0 && <span className="text-gray-500 text-sm block text-center mt-4 tracking-widest uppercase">Nenhuma arma</span>}
+                <div className="flex-grow overflow-y-auto custom-scrollbar p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-sans content-start">
+                {subTab === 'weapons' && state.inventory.weapons.length === 0 && <span className="text-gray-500 text-sm block text-center col-span-full mt-4 tracking-widest uppercase">Nenhuma arma</span>}
                 {subTab === 'weapons' && state.inventory.weapons.map(w => (
-                    <div key={w.id} className="bg-[#222] p-3 border-4 border-gray-600 flex justify-between items-center group hover:border-white transition-none pixel-box">
-                        <div>
-                            <div className="font-bold text-white uppercase tracking-wide">[{w.rank}] {w.name}</div>
-                            <div className="text-xs text-red-500 font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">Dano: +{w.stats?.damage}</div>
+                    <div key={w.id} className="bg-[#222] p-3 border-4 border-gray-600 flex flex-col justify-between items-center group hover:border-white transition-none pixel-box relative h-full">
+                        <div className="flex flex-col items-center gap-2 mb-3 text-center">
+                            <div className="w-24 h-24 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden mb-1">
+                                <PixelImage
+                                    src={getIcon(w.id, 'weapon')}
+                                    alt={w.name}
+                                    itemType="weapon"
+                                    rank={w.rank}
+                                    zoomOnHover={true}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div>
+                                <div className="font-bold text-white uppercase tracking-wide">[{w.rank}] {w.name}</div>
+                                <div className="text-xs text-red-500 font-bold mt-1 drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">Dano: +{w.stats?.damage}</div>
+                            </div>
                         </div>
                         {state.equipped.weapon?.id === w.id 
-                            ? <span className="text-[10px] font-bold text-gray-400 border-2 border-gray-600 px-3 py-1 uppercase tracking-widest"><span>Equipado</span></span>
-                            : <button onClick={() => handleEquipWeapon(w)} className="text-[10px] font-bold text-white border-2 border-white bg-black hover:bg-white hover:text-black px-4 py-2 uppercase transition-none"><span>Equipar</span></button>
+                            ? <span className="text-[10px] w-full text-center font-bold text-gray-400 border-2 border-gray-600 px-3 py-2 uppercase tracking-widest"><span>Equipado</span></span>
+                            : <button onClick={() => handleEquipWeapon(w)} className="text-[10px] w-full font-bold text-white border-2 border-white bg-black hover:bg-white hover:text-black px-4 py-2 uppercase transition-none"><span>Equipar</span></button>
                         }
                     </div>
                 ))}
 
-                {subTab === 'armors' && state.inventory.armors.length === 0 && <span className="text-gray-500 text-sm block text-center mt-4 tracking-widest uppercase">Nenhuma armadura</span>}
+                {subTab === 'armors' && state.inventory.armors.length === 0 && <span className="text-gray-500 text-sm block text-center col-span-full mt-4 tracking-widest uppercase">Nenhuma armadura</span>}
                 {subTab === 'armors' && state.inventory.armors.map(w => (
-                    <div key={w.id} className="bg-[#222] p-3 border-4 border-gray-600 flex justify-between items-center group hover:border-white transition-none pixel-box">
-                        <div>
-                            <div className="font-bold text-white uppercase tracking-wide">[{w.rank}] {w.name}</div>
-                            <div className="text-xs text-blue-400 font-bold drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">Defesa: +{w.stats?.defense}</div>
+                    <div key={w.id} className="bg-[#222] p-3 border-4 border-gray-600 flex flex-col justify-between items-center group hover:border-white transition-none pixel-box relative h-full">
+                        <div className="flex flex-col items-center gap-2 mb-3 text-center">
+                            <div className="w-24 h-24 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden mb-1">
+                                <PixelImage
+                                    src={getIcon(w.id, 'armor')}
+                                    alt={w.name}
+                                    itemType="armor"
+                                    rank={w.rank}
+                                    zoomOnHover={true}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div>
+                                <div className="font-bold text-white uppercase tracking-wide">[{w.rank}] {w.name}</div>
+                                <div className="text-xs text-blue-400 font-bold mt-1 drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">Defesa: +{w.stats?.defense}</div>
+                            </div>
                         </div>
                          {state.equipped.armor?.id === w.id 
-                            ? <span className="text-[10px] font-bold text-gray-400 border-2 border-gray-600 px-3 py-1 uppercase tracking-widest"><span>Equipado</span></span>
-                            : <button onClick={() => handleEquipArmor(w)} className="text-[10px] font-bold text-white border-2 border-white bg-black hover:bg-white hover:text-black px-4 py-2 uppercase transition-none"><span>Equipar</span></button>
+                            ? <span className="text-[10px] w-full text-center font-bold text-gray-400 border-2 border-gray-600 px-3 py-2 uppercase tracking-widest"><span>Equipado</span></span>
+                            : <button onClick={() => handleEquipArmor(w)} className="text-[10px] w-full font-bold text-white border-2 border-white bg-black hover:bg-white hover:text-black px-4 py-2 uppercase transition-none"><span>Equipar</span></button>
                         }
                     </div>
                 ))}
 
-                {subTab === 'accessories' && state.inventory.accessories.length === 0 && <span className="text-gray-500 text-sm block text-center mt-4 tracking-widest uppercase">Nenhum acessório</span>}
+                {subTab === 'accessories' && state.inventory.accessories.length === 0 && <span className="text-gray-500 text-sm block text-center col-span-full mt-4 tracking-widest uppercase">Nenhum acessório</span>}
                 {subTab === 'accessories' && state.inventory.accessories.map(w => (
-                    <div key={w.id} className="bg-[#222] p-3 border-4 border-gray-600 flex justify-between items-center group hover:border-white transition-none pixel-box">
-                        <div className="max-w-[70%]">
-                            <div className="font-bold text-white uppercase tracking-wide">[{w.rank}] {w.name}</div>
-                            <div className="text-[10px] text-gray-400 leading-tight mt-1">{w.description}</div>
+                    <div key={w.id} className="bg-[#222] p-3 border-4 border-gray-600 flex flex-col justify-between items-center group hover:border-white transition-none pixel-box relative h-full">
+                        <div className="flex flex-col items-center gap-2 mb-3 text-center">
+                            <div className="w-24 h-24 shrink-0 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden mb-1">
+                                <PixelImage
+                                    src={getIcon(w.id, 'accessory')}
+                                    alt={w.name}
+                                    itemType="accessory"
+                                    rank={w.rank}
+                                    zoomOnHover={true}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div>
+                                <div className="font-bold text-white uppercase tracking-wide">[{w.rank}] {w.name}</div>
+                                <div className="text-[10px] text-gray-400 leading-tight mt-1 px-1">{w.description}</div>
+                            </div>
                         </div>
                          {state.equipped.accessory?.id === w.id 
-                            ? <span className="text-[10px] font-bold text-gray-400 border-2 border-gray-600 px-3 py-1 uppercase tracking-widest"><span>Equipado</span></span>
-                            : <button onClick={() => handleEquipAcc(w)} className="text-[10px] font-bold text-white border-2 border-white bg-black hover:bg-white hover:text-black px-4 py-2 uppercase transition-none"><span>Equipar</span></button>
+                            ? <span className="text-[10px] w-full text-center font-bold text-gray-400 border-2 border-gray-600 px-3 py-2 uppercase tracking-widest"><span>Equipado</span></span>
+                            : <button onClick={() => handleEquipAcc(w)} className="text-[10px] w-full font-bold text-white border-2 border-white bg-black hover:bg-white hover:text-black px-4 py-2 uppercase transition-none"><span>Equipar</span></button>
                         }
                     </div>
                 ))}
 
-                {subTab === 'consumables' && state.inventory.consumables.length === 0 && <span className="text-gray-500 text-sm block text-center mt-4 tracking-widest uppercase">Nenhum consumível</span>}
+                {subTab === 'consumables' && state.inventory.consumables.length === 0 && <span className="text-gray-500 text-sm block text-center col-span-full mt-4 tracking-widest uppercase">Nenhum consumível</span>}
                 {subTab === 'consumables' && state.inventory.consumables.map(c => (
-                     <div key={c.item.id} className="bg-[#222] p-3 border-4 border-gray-600 flex justify-between items-center group hover:border-white transition-none pixel-box">
-                        <div className="max-w-[70%]">
-                            <div className="font-bold text-white uppercase tracking-wide">[{c.item.rank}] {c.item.name} <span className="text-yellow-400 drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">x{c.count}</span></div>
-                            <div className="text-[10px] text-gray-400 leading-tight mt-1">{c.item.description}</div>
+                     <div key={c.item.id} className="bg-[#222] p-3 border-4 border-gray-600 flex flex-col justify-between items-center group hover:border-white transition-none pixel-box relative h-full">
+                        <div className="flex flex-col items-center gap-2 mb-3 text-center">
+                            <div className="w-24 h-24 shrink-0 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden relative mb-1">
+                                <PixelImage
+                                    src={getIcon(c.item.id, 'consumable')}
+                                    alt={c.item.name}
+                                    itemType="consumable"
+                                    rank={c.item.rank}
+                                    zoomOnHover={true}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute bottom-1 right-1 bg-black border border-yellow-500 text-xs text-yellow-500 px-1.5 py-0.5 font-bold z-10 leading-none">x{c.count}</div>
+                            </div>
+                            <div>
+                                <div className="font-bold text-white uppercase tracking-wide">[{c.item.rank}] {c.item.name}</div>
+                                <div className="text-[10px] text-gray-400 leading-tight mt-1 px-1">{c.item.description}</div>
+                            </div>
                         </div>
-                        <button onClick={() => handleUseConsumable(c.item.id)} className="text-[10px] font-bold text-yellow-500 border-2 border-yellow-500 bg-black hover:bg-yellow-500 hover:text-black px-4 py-2 uppercase transition-none"><span>Usar</span></button>
+                        <button onClick={() => handleUseConsumable(c.item.id)} className="text-[10px] w-full font-bold text-yellow-500 border-2 border-yellow-500 bg-black hover:bg-yellow-500 hover:text-black px-4 py-2 uppercase transition-none"><span>Usar</span></button>
                     </div>
                 ))}
 
-                {subTab === 'passives' && state.inventory.skills.length === 0 && <span className="text-gray-500 text-sm block text-center mt-4 tracking-widest uppercase">Nenhuma passiva</span>}
+                {subTab === 'passives' && state.inventory.skills.length === 0 && <span className="text-gray-500 text-sm block text-center col-span-full mt-4 tracking-widest uppercase">Nenhuma passiva</span>}
                 {subTab === 'passives' && state.inventory.skills.map(s => {
                     const isEquipped = state.equipped.passives.find(p => p?.id === s.id);
                     return (
-                     <div key={s.id} className="bg-[#222] p-3 border-4 border-purple-900 flex justify-between items-center group hover:border-purple-500 transition-none pixel-box">
-                        <div className="max-w-[70%]">
-                            <div className="font-bold text-purple-400 uppercase tracking-wide">[{s.rank}] {s.name}</div>
-                            <div className="text-[10px] text-gray-400 leading-tight mt-1">{s.description}</div>
+                     <div key={s.id} className="bg-[#222] p-3 border-4 border-purple-900 flex flex-col justify-between items-center group hover:border-purple-500 transition-none pixel-box h-full">
+                        <div className="flex flex-col items-center gap-2 mb-3 text-center w-full">
+                            <div className="w-20 h-20 shrink-0 border-2 border-purple-900 bg-black flex items-center justify-center pixel-box overflow-hidden mb-1">
+                                <PixelImage
+                                    src={getIcon(s.id, 'consumable')}
+                                    alt={s.name}
+                                    itemType="consumable"
+                                    rank={s.rank}
+                                    zoomOnHover={true}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div>
+                                <div className="font-bold text-purple-400 uppercase tracking-wide">[{s.rank}] {s.name}</div>
+                                <div className="text-[10px] text-gray-400 leading-tight mt-1 px-1">{s.description}</div>
+                            </div>
                         </div>
                         {isEquipped 
-                            ? <span className="text-[10px] font-bold text-purple-700 border-2 border-purple-900 px-3 py-1 uppercase tracking-widest"><span>Ativo</span></span>
-                            : <button onClick={() => handleEquipPassive(s)} className="text-[10px] font-bold text-purple-400 border-2 border-purple-700 bg-black hover:bg-purple-500 hover:text-white px-4 py-2 uppercase transition-none"><span>Alocar</span></button>
+                            ? <span className="text-[10px] w-full text-center font-bold text-purple-700 border-2 border-purple-900 px-3 py-2 uppercase tracking-widest"><span>Ativo</span></span>
+                            : <button onClick={() => handleEquipPassive(s)} className="text-[10px] w-full font-bold text-purple-400 border-2 border-purple-700 bg-black hover:bg-purple-500 hover:text-white px-4 py-2 uppercase transition-none"><span>Alocar</span></button>
                         }
                     </div>
                     )

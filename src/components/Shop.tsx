@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useGame } from '../GameContext';
 import { ITEMS, SHOP_SKILLS } from '../lib/gameData';
 import { Item, Skill } from '../types';
+import { getIcon } from '../lib/itemIcons';
+import { PixelImage } from './PixelImage';
 
 export const Shop = () => {
     const { state, dispatch } = useGame();
@@ -85,7 +87,7 @@ export const Shop = () => {
                     ))}
                 </div>
 
-                <div className="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-2 font-sans">
+                <div className="flex-grow overflow-y-auto custom-scrollbar p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-sans content-start">
                     {subTab !== 'passives' && availableItems.filter(item => {
                         if (subTab === 'weapons') return item.type === 'weapon';
                         if (subTab === 'armors') return item.type === 'armor';
@@ -95,17 +97,29 @@ export const Shop = () => {
                     }).map(item => {
                         const canAfford = state.gold >= item.cost.gold && state.manaCrystals >= item.cost.crystals;
                         return (
-                            <div key={item.id} className={`bg-[#222] p-3 border-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition-none pixel-box
+                            <div key={item.id} className={`bg-[#222] p-3 border-4 flex flex-col justify-between items-center text-center gap-3 transition-none pixel-box relative h-full group
                                 ${canAfford ? 'border-gray-600 hover:border-white' : 'border-[#333] opacity-70'}`}>
-                                <div>
-                                    <div className="font-bold text-white text-xs uppercase tracking-wide">[{item.rank}] {item.name}</div>
-                                    <div className="text-[10px] sm:text-xs text-gray-400 mt-1 leading-tight">{item.description}</div>
-                                    <div className="mt-2">{renderCost(item.cost)}</div>
+                                <div className="flex flex-col items-center gap-2 w-full">
+                                    <div className="w-24 h-24 shrink-0 border-2 border-gray-600 bg-black flex items-center justify-center pixel-box overflow-hidden mb-1">
+                                        <PixelImage
+                                            src={getIcon(item.id, item.type)}
+                                            alt={item.name}
+                                            itemType={item.type as any}
+                                            rank={item.rank}
+                                            zoomOnHover={true}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-white text-xs uppercase tracking-wide">[{item.rank}] {item.name}</div>
+                                        <div className="text-[10px] text-gray-400 mt-1 leading-tight px-1">{item.description}</div>
+                                        <div className="mt-2 flex justify-center">{renderCost(item.cost)}</div>
+                                    </div>
                                 </div>
                                 <button 
                                     onClick={() => handleBuyItem(item)}
                                     disabled={!canAfford}
-                                    className={`px-4 py-2 text-[10px] font-bold uppercase border-2 flex-shrink-0 active:translate-y-1 transition-none outline-none w-full sm:w-auto
+                                    className={`px-4 py-2 text-[10px] w-full font-bold uppercase border-2 flex-shrink-0 active:translate-y-1 transition-none outline-none
                                     ${canAfford ? 'border-white bg-black text-white hover:bg-white hover:text-black' : 'border-gray-700 bg-black text-gray-600'}`}
                                 >
                                     <span className="block">Comprar</span>
@@ -121,23 +135,35 @@ export const Shop = () => {
                         if (subTab === 'consumables') return item.type === 'consumable';
                         return false;
                     }).length === 0 && (
-                        <div className="text-gray-500 text-sm p-4 text-center uppercase tracking-widest">Nenhum item disponível nesta categoria.</div>
+                        <div className="text-gray-500 text-sm p-4 text-center col-span-full uppercase tracking-widest">Nenhum item disponível nesta categoria.</div>
                     )}
 
                     {subTab === 'passives' && availableSkills.map(s => {
                         const canAfford = state.gold >= s.cost.gold && state.manaCrystals >= s.cost.crystals;
                         return (
-                            <div key={s.skill.id} className={`bg-[#222] p-3 border-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition-none pixel-box
+                            <div key={s.skill.id} className={`bg-[#222] p-3 border-4 flex flex-col justify-between items-center text-center gap-3 transition-none pixel-box h-full
                                 ${canAfford ? 'border-purple-900 hover:border-purple-500' : 'border-[#333] opacity-70'}`}>
-                                <div>
-                                    <div className="font-bold text-purple-400 text-xs uppercase tracking-wide">[{s.skill.rank}] {s.skill.name}</div>
-                                    <div className="text-[10px] sm:text-xs text-gray-400 mt-1 leading-tight">{s.skill.description}</div>
-                                    <div className="mt-2">{renderCost(s.cost)}</div>
+                                <div className="flex flex-col items-center gap-2 w-full">
+                                    <div className="w-24 h-24 shrink-0 border-2 border-purple-900 bg-black flex items-center justify-center pixel-box overflow-hidden mb-1">
+                                        <PixelImage
+                                            src={getIcon(s.skill.id, 'consumable')}
+                                            alt={s.skill.name}
+                                            itemType="consumable"
+                                            rank={s.skill.rank}
+                                            zoomOnHover={true}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-purple-400 text-xs uppercase tracking-wide">[{s.skill.rank}] {s.skill.name}</div>
+                                        <div className="text-[10px] text-gray-400 mt-1 leading-tight px-1">{s.skill.description}</div>
+                                        <div className="mt-2 flex justify-center">{renderCost(s.cost)}</div>
+                                    </div>
                                 </div>
                                 <button 
                                     onClick={() => handleBuySkill(s)}
                                     disabled={!canAfford}
-                                    className={`px-4 py-2 text-[10px] font-bold uppercase border-2 flex-shrink-0 active:translate-y-1 transition-none outline-none w-full sm:w-auto
+                                    className={`px-4 py-2 text-[10px] w-full font-bold uppercase border-2 flex-shrink-0 active:translate-y-1 transition-none outline-none
                                     ${canAfford ? 'border-purple-700 bg-black text-purple-400 hover:bg-purple-500 hover:text-white' : 'border-gray-700 bg-black text-gray-600'}`}
                                 >
                                     <span className="block">Comprar</span>

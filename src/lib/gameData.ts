@@ -125,16 +125,31 @@ export const ITEMS: Item[] = [
   { id: 'ac_b', name: 'Anel do Caçador Chama', rank: 'B', type: 'accessory', description: '+15 Força e Inteligência.', stats: { strength: 15, intelligence: 15 }, cost: { gold: 15000, crystals: 200 } },
   { id: 'ac_a', name: 'Olho de Fera', rank: 'A', type: 'accessory', description: '+40 Sentido.', stats: { sense: 40 }, cost: { gold: 50000, crystals: 1000 } },
   { id: 'ac_s', name: 'Coração do Governante', rank: 'S', type: 'accessory', description: '+100 todos os atributos.', stats: { strength: 100, agility: 100, vitality: 100, intelligence: 100, sense: 100 }, cost: { gold: 500000, crystals: 5000 } },
-];
-
-export const CONSUMABLES: Item[] = [
+  
+  // Consumables
   { id: 'pot_e', name: 'Poção Pequena de HP', rank: 'E', type: 'consumable', description: 'Recupera 50 HP.', stats: { hpRestore: 50 }, cost: { gold: 20, crystals: 0 } },
   { id: 'pot_mana_e', name: 'Poção Pequena de Mana', rank: 'E', type: 'consumable', description: 'Recupera 30 Mana.', stats: { mpRestore: 30 }, cost: { gold: 30, crystals: 0 } },
   { id: 'pot_energy_e', name: 'Bebida Energética', rank: 'E', type: 'consumable', description: 'Recupera 30 Energia.', stats: { energyRestore: 30 }, cost: { gold: 30, crystals: 0 } },
   
   { id: 'pot_d', name: 'Poção Média de HP', rank: 'D', type: 'consumable', description: 'Recupera 200 HP.', stats: { hpRestore: 200 }, cost: { gold: 100, crystals: 2 } },
   { id: 'pot_mana_d', name: 'Poção Média de Mana', rank: 'D', type: 'consumable', description: 'Recupera 100 Mana.', stats: { mpRestore: 100 }, cost: { gold: 150, crystals: 3 } },
+  { id: 'pot_energy_d', name: 'Poção Média de Energia', rank: 'D', type: 'consumable', description: 'Recupera 100 Energia.', stats: { energyRestore: 100 }, cost: { gold: 150, crystals: 3 } },
+
+  { id: 'pot_c', name: 'Poção Grande de HP', rank: 'C', type: 'consumable', description: 'Recupera 800 HP.', stats: { hpRestore: 800 }, cost: { gold: 500, crystals: 10 } },
+  { id: 'pot_mana_c', name: 'Poção Grande de Mana', rank: 'C', type: 'consumable', description: 'Recupera 400 Mana.', stats: { mpRestore: 400 }, cost: { gold: 750, crystals: 15 } },
+  { id: 'pot_energy_c', name: 'Poção Grande de Energia', rank: 'C', type: 'consumable', description: 'Recupera 400 Energia.', stats: { energyRestore: 400 }, cost: { gold: 750, crystals: 15 } },
+
+  { id: 'pot_b', name: 'Elixir de Cura', rank: 'B', type: 'consumable', description: 'Recupera 2500 HP.', stats: { hpRestore: 2500 }, cost: { gold: 2500, crystals: 50 } },
+  { id: 'pot_mana_b', name: 'Elixir de Mana', rank: 'B', type: 'consumable', description: 'Recupera 1200 Mana.', stats: { mpRestore: 1200 }, cost: { gold: 3500, crystals: 75 } },
+
+  { id: 'pot_a', name: 'Gota de Yggdrasil', rank: 'A', type: 'consumable', description: 'Recupera 10000 HP.', stats: { hpRestore: 10000 }, cost: { gold: 12000, crystals: 250 } },
+  { id: 'pot_mana_a', name: 'Lágrima Estelar', rank: 'A', type: 'consumable', description: 'Recupera 5000 Mana.', stats: { mpRestore: 5000 }, cost: { gold: 18000, crystals: 350 } },
+
+  { id: 'pot_s', name: 'Essência da Vida', rank: 'S', type: 'consumable', description: 'Recupera 50000 HP.', stats: { hpRestore: 50000 }, cost: { gold: 50000, crystals: 1000 } },
+  { id: 'pot_mana_s', name: 'Essência Mágica', rank: 'S', type: 'consumable', description: 'Recupera 20000 Mana.', stats: { mpRestore: 20000 }, cost: { gold: 75000, crystals: 1500 } },
 ];
+
+export const CONSUMABLES: Item[] = ITEMS.filter(item => item.type === 'consumable');
 
 export const SHOP_SKILLS: { skill: Skill; cost: { gold: number; crystals: number } }[] = [
   { skill: { id: 'pass_e_xp', name: 'Aprendiz Veloz', rank: 'E', type: 'passive', description: '+10% XP', passiveEffects: { xpMultiplier: 1.1 } }, cost: { gold: 1000, crystals: 5 } },
@@ -155,34 +170,34 @@ export const UPGRADES = [
 
 const BASE_MONSTERS: Record<Rank, { normal: Omit<Monster, 'id'>, boss: Omit<Monster, 'id'>, secret: Omit<Monster, 'id'> }> = {
   'E': {
-    normal: { name: 'Goblin Trabalhador', rank: 'E', hp: 50, maxHp: 50, damage: 5, defense: 1, isBoss: false, isSecret: false, xpReward: 10, goldReward: 5, crystalReward: 0 },
-    boss: { name: 'Hobgoblin Chefe', rank: 'E', hp: 200, maxHp: 200, damage: 15, defense: 5, isBoss: true, isSecret: false, xpReward: 50, goldReward: 30, crystalReward: 1 },
-    secret: { name: 'Slime Dourado', rank: 'E', hp: 100, maxHp: 100, damage: 2, defense: 10, isBoss: false, isSecret: true, xpReward: 200, goldReward: 500, crystalReward: 5, classPointReward: 1 },
+    normal: { name: 'Goblin', rank: 'E', hp: 80, maxHp: 80, damage: 12, defense: 3, isBoss: false, isSecret: false, xpReward: 5, goldReward: 3, crystalReward: 0 },
+    boss: { name: 'Hobgoblin Chefe', rank: 'E', hp: 350, maxHp: 350, damage: 30, defense: 10, isBoss: true, isSecret: false, xpReward: 25, goldReward: 15, crystalReward: 1 },
+    secret: { name: 'Hobgoblin Enfurecido', rank: 'E', hp: 200, maxHp: 200, damage: 10, defense: 20, isBoss: false, isSecret: true, xpReward: 100, goldReward: 250, crystalReward: 5, classPointReward: 1 },
   },
   'D': {
-    normal: { name: 'Lobo Mágico', rank: 'D', hp: 300, maxHp: 300, damage: 25, defense: 10, isBoss: false, isSecret: false, xpReward: 40, goldReward: 20, crystalReward: 2 },
-    boss: { name: 'Lobo Alfa Chifrudo', rank: 'D', hp: 1000, maxHp: 1000, damage: 60, defense: 25, isBoss: true, isSecret: false, xpReward: 200, goldReward: 100, crystalReward: 10 },
-    secret: { name: 'Aparição Sombria', rank: 'D', hp: 500, maxHp: 500, damage: 100, defense: 0, isBoss: false, isSecret: true, xpReward: 800, goldReward: 400, crystalReward: 20, classPointReward: 2 },
+    normal: { name: 'Lobo Mágico', rank: 'D', hp: 500, maxHp: 500, damage: 60, defense: 20, isBoss: false, isSecret: false, xpReward: 20, goldReward: 10, crystalReward: 1 },
+    boss: { name: 'Lobo Alfa Chifrudo', rank: 'D', hp: 1500, maxHp: 1500, damage: 120, defense: 50, isBoss: true, isSecret: false, xpReward: 100, goldReward: 50, crystalReward: 5 },
+    secret: { name: 'Lobo Espiritual', rank: 'D', hp: 800, maxHp: 800, damage: 200, defense: 0, isBoss: false, isSecret: true, xpReward: 400, goldReward: 200, crystalReward: 10, classPointReward: 2 },
   },
   'C': {
-    normal: { name: 'Golem de Pedra', rank: 'C', hp: 2000, maxHp: 2000, damage: 80, defense: 100, isBoss: false, isSecret: false, xpReward: 200, goldReward: 100, crystalReward: 10 },
-    boss: { name: 'Gigante de Aço', rank: 'C', hp: 8000, maxHp: 8000, damage: 250, defense: 300, isBoss: true, isSecret: false, xpReward: 1000, goldReward: 500, crystalReward: 50 },
-    secret: { name: 'Golem das Jóias', rank: 'C', hp: 4000, maxHp: 4000, damage: 150, defense: 200, isBoss: false, isSecret: true, xpReward: 3000, goldReward: 5000, crystalReward: 150, classPointReward: 5 },
+    normal: { name: 'Golem de Pedra', rank: 'C', hp: 3000, maxHp: 3000, damage: 200, defense: 200, isBoss: false, isSecret: false, xpReward: 100, goldReward: 50, crystalReward: 5 },
+    boss: { name: 'Gigante de Aço', rank: 'C', hp: 12000, maxHp: 12000, damage: 500, defense: 500, isBoss: true, isSecret: false, xpReward: 500, goldReward: 250, crystalReward: 25 },
+    secret: { name: 'Golem das Jóias', rank: 'C', hp: 6000, maxHp: 6000, damage: 300, defense: 400, isBoss: false, isSecret: true, xpReward: 1500, goldReward: 2500, crystalReward: 75, classPointReward: 5 },
   },
   'B': {
-    normal: { name: 'Orc Guerreiro', rank: 'B', hp: 12000, maxHp: 12000, damage: 400, defense: 200, isBoss: false, isSecret: false, xpReward: 1000, goldReward: 500, crystalReward: 40 },
-    boss: { name: 'Orque Supremo', rank: 'B', hp: 50000, maxHp: 50000, damage: 1200, defense: 800, isBoss: true, isSecret: false, xpReward: 5000, goldReward: 2500, crystalReward: 200 },
-    secret: { name: 'Assassino Sombrio', rank: 'B', hp: 25000, maxHp: 25000, damage: 3000, defense: 100, isBoss: false, isSecret: true, xpReward: 15000, goldReward: 10000, crystalReward: 500, classPointReward: 10 },
+    normal: { name: 'Orc Guerreiro', rank: 'B', hp: 18000, maxHp: 18000, damage: 1000, defense: 400, isBoss: false, isSecret: false, xpReward: 500, goldReward: 250, crystalReward: 20 },
+    boss: { name: 'Orque Supremo', rank: 'B', hp: 75000, maxHp: 75000, damage: 3000, defense: 1200, isBoss: true, isSecret: false, xpReward: 2500, goldReward: 1250, crystalReward: 100 },
+    secret: { name: 'Assassino Sombrio', rank: 'B', hp: 35000, maxHp: 35000, damage: 6000, defense: 200, isBoss: false, isSecret: true, xpReward: 7500, goldReward: 5000, crystalReward: 250, classPointReward: 10 },
   },
   'A': {
-    normal: { name: 'Espectro Superior', rank: 'A', hp: 80000, maxHp: 80000, damage: 3000, defense: 1000, isBoss: false, isSecret: false, xpReward: 8000, goldReward: 3000, crystalReward: 300 },
-    boss: { name: 'Arquimago Lich', rank: 'A', hp: 300000, maxHp: 300000, damage: 8000, defense: 4000, isBoss: true, isSecret: false, xpReward: 40000, goldReward: 15000, crystalReward: 1500 },
-    secret: { name: 'Anjo Caído', rank: 'A', hp: 200000, maxHp: 200000, damage: 12000, defense: 3000, isBoss: false, isSecret: true, xpReward: 120000, goldReward: 80000, crystalReward: 5000, classPointReward: 25 },
+    normal: { name: 'Espectro Superior', rank: 'A', hp: 120000, maxHp: 120000, damage: 8000, defense: 2000, isBoss: false, isSecret: false, xpReward: 4000, goldReward: 1500, crystalReward: 150 },
+    boss: { name: 'Arquimago Lich', rank: 'A', hp: 450000, maxHp: 450000, damage: 20000, defense: 8000, isBoss: true, isSecret: false, xpReward: 20000, goldReward: 7500, crystalReward: 750 },
+    secret: { name: 'Anjo Caído', rank: 'A', hp: 300000, maxHp: 300000, damage: 30000, defense: 5000, isBoss: false, isSecret: true, xpReward: 60000, goldReward: 40000, crystalReward: 2500, classPointReward: 25 },
   },
   'S': {
-    normal: { name: 'Cavaleiro do Caos', rank: 'S', hp: 500000, maxHp: 500000, damage: 15000, defense: 8000, isBoss: false, isSecret: false, xpReward: 50000, goldReward: 20000, crystalReward: 2000 },
-    boss: { name: 'Lorde Dragão Antigo', rank: 'S', hp: 2500000, maxHp: 2500000, damage: 50000, defense: 25000, isBoss: true, isSecret: false, xpReward: 300000, goldReward: 200000, crystalReward: 20000 },
-    secret: { name: 'Fragmento do Arquiteto', rank: 'S', hp: 5000000, maxHp: 5000000, damage: 100000, defense: 50000, isBoss: false, isSecret: true, xpReward: 1000000, goldReward: 1000000, crystalReward: 100000, classPointReward: 100 },
+    normal: { name: 'Cavaleiro do Caos', rank: 'S', hp: 750000, maxHp: 750000, damage: 40000, defense: 15000, isBoss: false, isSecret: false, xpReward: 25000, goldReward: 10000, crystalReward: 1000 },
+    boss: { name: 'Lorde Dragão Antigo', rank: 'S', hp: 4000000, maxHp: 4000000, damage: 150000, defense: 50000, isBoss: true, isSecret: false, xpReward: 150000, goldReward: 100000, crystalReward: 10000 },
+    secret: { name: 'Fragmento do Arquiteto', rank: 'S', hp: 8000000, maxHp: 8000000, damage: 300000, defense: 100000, isBoss: false, isSecret: true, xpReward: 500000, goldReward: 500000, crystalReward: 50000, classPointReward: 100 },
   }
 };
 
@@ -209,17 +224,22 @@ export const getNextRank = (currentRank: Rank): Rank => {
 };
 
 export const calculateRequiredXP = (level: number): number => {
-  return Math.floor(100 * Math.pow(1.15, level - 1));
+  return Math.floor(100 * Math.pow(1.3, level - 1));
 };
 
 export const calculatePlayerStats = (state: any) => {
+  const vit = state?.attributes?.vitality || 5;
+  const int = state?.attributes?.intelligence || 5;
+  const agi = state?.attributes?.agility || 5;
+  const str = state?.attributes?.strength || 5;
+
   let stats = {
-    maxHp: 100 + (state.attributes.vitality * 20),
-    maxMana: 50 + (state.attributes.intelligence * 10),
-    maxEnergy: 50 + (state.attributes.agility * 5) + (state.attributes.strength * 5),
-    attack: state.attributes.strength * 2 + state.attributes.agility * 1,
-    magicAttack: state.attributes.intelligence * 3,
-    defense: state.attributes.vitality * 1 + state.attributes.agility * 1,
+    maxHp: 50 + (vit * 10),
+    maxMana: 30 + (int * 5),
+    maxEnergy: 30 + (agi * 3) + (str * 2),
+    attack: str * 1.5 + agi * 0.5,
+    magicAttack: int * 2,
+    defense: Math.floor(vit * 0.5 + agi * 0.2),
   };
   
   if (state.equipped.weapon) {

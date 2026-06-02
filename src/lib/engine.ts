@@ -1,5 +1,5 @@
 import { PlayerState, Attributes, Rank, Item, Skill, PlayerClass } from '../types';
-import { calculateRequiredXP, getRankFromLevel } from './gameData';
+import { calculateRequiredXP, getRankFromLevel, calculatePlayerStats } from './gameData';
 
 export const getInitialState = (): PlayerState => ({
   level: 1,
@@ -14,12 +14,12 @@ export const getInitialState = (): PlayerState => ({
   classPoints: 0,
   resurrectionPoints: 0,
   
-  maxHp: 120,
-  currentHp: 120,
-  maxMana: 60,
-  currentMana: 60,
-  maxEnergy: 60,
-  currentEnergy: 60,
+  maxHp: 100,
+  currentHp: 100,
+  maxMana: 55,
+  currentMana: 55,
+  maxEnergy: 55,
+  currentEnergy: 55,
   
   attributes: {
     strength: 5,
@@ -57,7 +57,24 @@ export const saveGameState = (state: PlayerState) => {
 export const loadGameState = (): PlayerState => {
   try {
     const saved = localStorage.getItem('sololevelling_roguelike_save');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const base = getInitialState();
+      
+      // Fix potential NaN/null corruption from old saves
+      if (parsed.currentHp === null || isNaN(parsed.currentHp) || parsed.currentHp <= 0) parsed.currentHp = base.maxHp;
+      if (parsed.currentMana === null || isNaN(parsed.currentMana)) parsed.currentMana = base.maxMana;
+      if (parsed.currentEnergy === null || isNaN(parsed.currentEnergy)) parsed.currentEnergy = base.maxEnergy;
+
+      return {
+        ...base,
+        ...parsed,
+        attributes: { ...base.attributes, ...(parsed.attributes || {}) },
+        inventory: { ...base.inventory, ...(parsed.inventory || {}) },
+        equipped: { ...base.equipped, ...(parsed.equipped || {}) },
+        upgrades: { ...base.upgrades, ...(parsed.upgrades || {}) },
+      };
+    }
   } catch (e) {}
   return getInitialState();
 };
@@ -79,6 +96,7 @@ export type GameAction =
   | { type: 'EQUIP_ACCESSORY'; item: Item }
   | { type: 'EQUIP_PASSIVE'; skill: Skill; slot: number }
   | { type: 'BUY_ITEM'; item: Item; itemType: 'weapons' | 'armors' | 'accessories' | 'consumables' }
+  | { type: 'OBTAIN_ITEM'; item: Item; itemType: 'weapons' | 'armors' | 'accessories' | 'consumables'; amount?: number }
   | { type: 'BUY_SKILL'; skill: Skill; cost: { gold: number; crystals: number } }
   | { type: 'USE_CONSUMABLE'; itemId: string }
   | { type: 'DEATH' }
@@ -101,26 +119,41 @@ export const gameReducer = (state: PlayerState, action: GameAction): PlayerState
         newState.xpNeeded = calculateRequiredXP(newState.level);
         newState.rank = getRankFromLevel(newState.level);
         // Heal full on pure level up conceptually
-        newState.currentHp = newState.maxHp;
+        const stats = calculatePlayerStats(newState);
+        newState.currentHp = stats.maxHp;
       }
       break;
     case 'ADD_GOLD': newState.gold += action.amount; break;
     case 'ADD_CRYSTALS': newState.manaCrystals += action.amount; break;
     case 'ADD_CLASS_POINTS': newState.classPoints += action.amount; break;
     
-    case 'HEAL_HP': newState.currentHp = Math.min(newState.maxHp, newState.currentHp + action.amount); break;
-    case 'HEAL_MANA': newState.currentMana = Math.min(newState.maxMana, newState.currentMana + action.amount); break;
-    case 'HEAL_ENERGY': newState.currentEnergy = Math.min(newState.maxEnergy, newState.currentEnergy + action.amount); break;
+    case 'HEAL_HP': {
+      const stats = calculatePlayerStats(newState);
+      newState.currentHp = Math.min(stats.maxHp, newState.currentHp + action.amount); 
+      break;
+    }
+    case 'HEAL_MANA': {
+      const stats = calculatePlayerStats(newState);
+      newState.currentMana = Math.min(stats.maxMana, newState.currentMana + action.amount); 
+      break;
+    }
+    case 'HEAL_ENERGY': {
+      const stats = calculatePlayerStats(newState);
+      newState.currentEnergy = Math.min(stats.maxEnergy, newState.currentEnergy + action.amount); 
+      break;
+    }
     
     case 'TAKE_DAMAGE': newState.currentHp = Math.max(0, newState.currentHp - action.amount); break;
     case 'SPEND_MANA': newState.currentMana = Math.max(0, newState.currentMana - action.amount); break;
     case 'SPEND_ENERGY': newState.currentEnergy = Math.max(0, newState.currentEnergy - action.amount); break;
     
-    case 'FULL_RESTORE':
-      newState.currentHp = newState.maxHp;
-      newState.currentMana = newState.maxMana;
-      newState.currentEnergy = newState.maxEnergy;
+    case 'FULL_RESTORE': {
+      const stats = calculatePlayerStats(newState);
+      newState.currentHp = stats.maxHp;
+      newState.currentMana = stats.maxMana;
+      newState.currentEnergy = stats.maxEnergy;
       break;
+    }
 
     case 'ADD_STAT':
       if (newState.statPoints > 0) {
@@ -156,6 +189,21 @@ export const gameReducer = (state: PlayerState, action: GameAction): PlayerState
       }
       break;
 
+    case 'OBTAIN_ITEM':
+      if (action.itemType === 'consumables') {
+        const existing = newState.inventory.consumables.find(c => c.item.id === action.item.id);
+        const amt = action.amount || 1;
+        if (existing) {
+           newState.inventory.consumables = newState.inventory.consumables.map(c => c.item.id === action.item.id ? { ...c, count: c.count + amt } : c);
+        } else {
+           newState.inventory.consumables = [...newState.inventory.consumables, { item: action.item, count: amt }];
+        }
+      } else {
+         // @ts-ignore
+         newState.inventory[action.itemType] = [...newState.inventory[action.itemType], action.item];
+      }
+      break;
+
     case 'BUY_SKILL':
       if (newState.gold >= action.cost.gold && newState.manaCrystals >= action.cost.crystals) {
          newState.gold -= action.cost.gold;
@@ -164,16 +212,18 @@ export const gameReducer = (state: PlayerState, action: GameAction): PlayerState
       }
       break;
 
-    case 'USE_CONSUMABLE':
+    case 'USE_CONSUMABLE': {
       const c = newState.inventory.consumables.find(c => c.item.id === action.itemId);
       if (c && c.count > 0) {
         c.count--;
-        if (c.item.stats?.hpRestore) newState.currentHp = Math.min(newState.maxHp, newState.currentHp + c.item.stats.hpRestore);
-        if (c.item.stats?.mpRestore) newState.currentMana = Math.min(newState.maxMana, newState.currentMana + c.item.stats.mpRestore);
-        if (c.item.stats?.energyRestore) newState.currentEnergy = Math.min(newState.maxEnergy, newState.currentEnergy + c.item.stats.energyRestore);
+        const stats = calculatePlayerStats(newState);
+        if (c.item.stats?.hpRestore) newState.currentHp = Math.min(stats.maxHp, newState.currentHp + c.item.stats.hpRestore);
+        if (c.item.stats?.mpRestore) newState.currentMana = Math.min(stats.maxMana, newState.currentMana + c.item.stats.mpRestore);
+        if (c.item.stats?.energyRestore) newState.currentEnergy = Math.min(stats.maxEnergy, newState.currentEnergy + c.item.stats.energyRestore);
       }
       newState.inventory.consumables = newState.inventory.consumables.filter(c => c.count > 0);
       break;
+    }
 
     case 'DEATH':
       // Roguelike rebirth: calculate resurrection points
@@ -215,9 +265,14 @@ export const gameReducer = (state: PlayerState, action: GameAction): PlayerState
       }
       break;
       
-    case 'RESET_SAVE':
+    case 'RESET_SAVE': {
+      const rp = newState.resurrectionPoints;
+      const upg = newState.upgrades;
       newState = getInitialState();
+      newState.resurrectionPoints = rp;
+      newState.upgrades = upg;
       break;
+    }
   }
   
   saveGameState(newState);

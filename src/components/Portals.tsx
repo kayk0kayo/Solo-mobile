@@ -2,6 +2,23 @@ import React from 'react';
 import { useGame } from '../GameContext';
 import { generateMonster, RANKS } from '../lib/gameData';
 import { Monster, Rank } from '../types';
+import { PixelImage } from './PixelImage';
+
+import portalE from '../assets/images/portal_rank_e_1780249307767.png';
+import portalD from '../assets/images/portal_rank_d_1780249351897.png';
+import portalC from '../assets/images/portal_rank_c_1780249371862.png';
+import portalB from '../assets/images/portal_rank_b_1780249387468.png';
+import portalA from '../assets/images/portal_rank_a_1780249404412.png';
+import portalS from '../assets/images/portal_rank_s_1780249422048.png';
+
+const portalImages: Record<Rank, string> = {
+    'E': portalE,
+    'D': portalD,
+    'C': portalC,
+    'B': portalB,
+    'A': portalA,
+    'S': portalS
+};
 
 export const Portals = ({ onEnterPortal }: { onEnterPortal: (m: Monster, isRed: boolean) => void }) => {
     
@@ -34,8 +51,15 @@ export const Portals = ({ onEnterPortal }: { onEnterPortal: (m: Monster, isRed: 
                                 <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Portal Gate</div>
                                 <div className="text-2xl font-black text-white uppercase tracking-wider drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">Rank {rank}</div>
                             </div>
-                            <div className="w-12 h-12 bg-blue-900 border-4 border-blue-400 flex items-center justify-center pixel-box">
-                                <div className="w-4 h-full bg-blue-400"></div>
+                            <div className="w-32 h-32 bg-black border-4 border-[#555] group-hover:border-white flex items-center justify-center pixel-box overflow-hidden shrink-0">
+                                <PixelImage
+                                    src={portalImages[rank]}
+                                    alt={`Portal Rank ${rank}`}
+                                    itemType="portal"
+                                    rank={rank}
+                                    zoomOnHover={true}
+                                    className="w-full h-full object-cover scale-[1.7] group-hover:scale-[1.9]"
+                                />
                             </div>
                         </div>
                     </button>
